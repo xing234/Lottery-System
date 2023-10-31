@@ -14,16 +14,8 @@ import javax.annotation.Resource;
 @Slf4j
 public class XTimerController {
 
-    @Resource
-    private TestProviderClient providerClient;
-
     @GetMapping("/consumer")
     public ResponseEntity<String> consumer() {
-        String resultStr = providerClient.call("hello");
-        System.out.println("AA:" + resultStr);
-        log.info("BB:" + resultStr);
-        return ResponseEntity.ok(
-                "result:"+resultStr
-        );
+        return null;
     }
 }

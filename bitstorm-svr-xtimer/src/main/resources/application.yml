@@ -36,11 +36,16 @@ mybatis:
 
 #xTimer相关配置
 scheduler:
-   workersNum: 100
    bucketsNum: 20
    tryLockSeconds: 70
    tryLockGapMilliSeconds: 100
    successExpireSeconds: 130
+   pool:
+    corePoolSize: 100
+    maxPoolSize: 100
+    queueCapacity: 99999
+    namePrefix: scheduler-
+
 
 trigger:
    zrangeGapSeconds: 1

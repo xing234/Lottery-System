@@ -37,20 +37,8 @@
         where task_id = #{taskModel.taskId};
     </update>
 
-    <resultMap id="getTaskList" type="com.zdf.flowsvr.data.AsyncFlowTask">
+    <resultMap id="getTaskList" type="cn.bitoffer.xtimer.model.TaskModel">
         <result column="id" jdbcType="BIGINT" property="id" />
-        <result column="user_id" jdbcType="VARCHAR" property="user_id"/>
-        <result column="task_id" jdbcType="VARCHAR" property="task_id"/>
-        <result column="task_type" jdbcType="VARCHAR" property="task_type"/>
-        <result column="task_stage" jdbcType="VARCHAR" property="task_stage"/>
-        <result column="status" jdbcType="INTEGER" property="status"/>
-        <result column="crt_retry_num" jdbcType="INTEGER" property="crt_retry_num"/>
-        <result column="max_retry_num" jdbcType="INTEGER" property="max_retry_num"/>
-        <result column="priority" jdbcType="INTEGER" property="priority"/>
-        <result column="order_time" jdbcType="BIGINT" property="order_time"/>
-        <result column="max_retry_interval" jdbcType="INTEGER" property="max_retry_interval"/>
-        <result column="schedule_log" jdbcType="VARCHAR" property="schedule_log"/>
-        <result column="task_context" jdbcType="VARCHAR" property="task_context"/>
         <result column="create_time" jdbcType="BIGINT" property="create_time"/>
         <result column="modify_time" jdbcType="BIGINT" property="modify_time"/>
     </resultMap>
