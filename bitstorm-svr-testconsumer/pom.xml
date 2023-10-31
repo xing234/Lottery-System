@@ -10,7 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>bitstorm-svr-testcomsumer</artifactId>
+    <artifactId>bitstorm-svr-testconsumer</artifactId>
     <description>服务模板</description>
 
     <dependencies>

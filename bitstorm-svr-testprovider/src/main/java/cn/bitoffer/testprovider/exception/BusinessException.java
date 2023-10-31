@@ -1,6 +1,6 @@
 package cn.bitoffer.testprovider.exception;
 
-import cn.bitoffer.xtimer.common.ErrorCode;
+import cn.bitoffer.testprovider.common.ErrorCode;
 
 /**
  * 自定义异常类
