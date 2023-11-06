@@ -69,9 +69,8 @@ public class TriggerTimerTask extends TimerTask {
     }
 
     private void handleBatch(Date start, Date end){
-        int bucket = getBucket(minuteBucketKey);
         //
-        List<TaskModel> tasks = getTasksByTime(bucket,start,end);
+        List<TaskModel> tasks = getTasksByTime(start,end);
         if (CollectionUtils.isEmpty(tasks)){
             return;
         }
@@ -93,7 +92,7 @@ public class TriggerTimerTask extends TimerTask {
         return Integer.parseInt(timeBucket[1]);
     }
 
-    private List<TaskModel> getTasksByTime(int bucket,Date start, Date end){
+    private List<TaskModel> getTasksByTime(Date start, Date end){
         List<TaskModel> tasks = new ArrayList<>();
 
         // 先走缓存

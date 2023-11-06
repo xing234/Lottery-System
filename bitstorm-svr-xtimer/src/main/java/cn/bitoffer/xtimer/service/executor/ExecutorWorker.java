@@ -1,7 +1,7 @@
 package cn.bitoffer.xtimer.service.executor;
 
 import cn.bitoffer.xtimer.common.ErrorCode;
-import cn.bitoffer.xtimer.dto.NotifyHTTPParam;
+import cn.bitoffer.api.dto.xtimer.NotifyHTTPParam;
 import cn.bitoffer.xtimer.enums.TaskStatus;
 import cn.bitoffer.xtimer.enums.TimerStatus;
 import cn.bitoffer.xtimer.exception.BusinessException;
@@ -10,7 +10,7 @@ import cn.bitoffer.xtimer.mapper.TimerMapper;
 import cn.bitoffer.xtimer.model.TaskModel;
 import cn.bitoffer.xtimer.model.TimerModel;
 import cn.bitoffer.xtimer.utils.TimerUtils;
-import cn.bitoffer.xtimer.vo.TimerVO;
+import cn.bitoffer.api.dto.xtimer.TimerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -87,8 +87,8 @@ public class ExecutorWorker {
     }
 
     private ResponseEntity<String> executeTimerCallBack(TimerModel timerModel){
-        TimerVO timerVO = TimerVO.objToVo(timerModel);
-        NotifyHTTPParam httpParam = timerVO.getNotifyHTTPParam();
+        TimerDTO timerDTO = TimerModel.objToVo(timerModel);
+        NotifyHTTPParam httpParam = timerDTO.getNotifyHTTPParam();
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> resp = null;
         switch (httpParam.getMethod()){

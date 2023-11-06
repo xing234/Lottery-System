@@ -18,6 +18,12 @@ public class TimerUtils {
         return "enable_timer_lock_"+app;
     }
 
+    public static String GetMigratorLockKey(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
+        String dateStr = sdf.format(date);
+        return "migrator_lock_"+dateStr;
+    }
+
     public static String GetTimeBucketLockKey(Date time , int bucketId){
         StringBuilder sb = new StringBuilder();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");

@@ -1,22 +1,22 @@
 package cn.bitoffer.xtimer.service;
 
-import cn.bitoffer.xtimer.vo.TimerVO;
+import cn.bitoffer.api.dto.xtimer.TimerDTO;
 
 import java.util.List;
 
 public interface XTimerService {
 
-    Long CreateTimer(TimerVO timerVO);
+    Long CreateTimer(TimerDTO timerDTO);
 
     void DeleteTimer(String app, long id);
 
-    void Update(TimerVO timerVO);
+    void Update(TimerDTO timerDTO);
 
-    TimerVO GetTimer(String app, long id);
+    TimerDTO GetTimer(String app, long id);
 
     void EnableTimer(String app, long id);
 
     void UnEnableTimer(String app, long id);
 
-    List<TimerVO> GetAppTimers(String app);
+    List<TimerDTO> GetAppTimers(String app);
 }

@@ -32,7 +32,7 @@
             <if test="timerModel.status != null">
                 `status` = #{timerModel.status},
             </if>
-            <if test="timerModel.crom != null">
+            <if test="timerModel.cron != null">
                 `cron` = #{timerModel.cron},
             </if>
             <if test="timerModel.notifyHTTPParam != null">
@@ -44,5 +44,9 @@
 
     <select id="getTimerById" resultMap="timer">
         select * from xtimer where timer_id = #{timerId};
+    </select>
+
+    <select id="getTimersByStatus" resultMap="timer">
+        select * from xtimer where status = #{status};
     </select>
 </mapper>

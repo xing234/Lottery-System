@@ -18,6 +18,7 @@ public class ConsumerController {
     @GetMapping("/consumer")
     public ResponseEntity<String> consumer() {
         String resultStr = providerClient.call("hello");
+        //String resultStr = "";
         System.out.println("AA:" + resultStr);
         log.info("BB:" + resultStr);
         return ResponseEntity.ok(

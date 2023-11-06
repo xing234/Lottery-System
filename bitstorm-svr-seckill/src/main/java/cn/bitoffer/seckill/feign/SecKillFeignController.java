@@ -1,6 +1,6 @@
 package cn.bitoffer.seckill.feign;
 
-import cn.bitoffer.api.feign.TestProviderClient;
+import cn.bitoffer.api.feign.TestSeckillClient;
 import cn.bitoffer.seckill.model.Example;
 import cn.bitoffer.seckill.service.ExampleService;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
-public class SecKillFeignController implements TestProviderClient {
+public class SecKillFeignController implements TestSeckillClient {
 
     @Autowired
     private ExampleService exampleService;
