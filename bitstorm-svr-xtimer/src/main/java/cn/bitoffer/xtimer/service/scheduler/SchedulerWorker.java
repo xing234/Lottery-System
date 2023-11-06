@@ -3,8 +3,6 @@ package cn.bitoffer.xtimer.service.scheduler;
 import cn.bitoffer.xtimer.common.conf.SchedulerAppConf;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -35,13 +33,18 @@ public class SchedulerWorker {
 
     private void handleSlice(int bucketId){
         Date now = new Date();
-        schedulerTask.asyncHandleSlice(bucketId);
+        Date nowPreMin = new Date(now.getTime() - 60000);
+        try {
+            schedulerTask.asyncHandleSlice(nowPreMin,bucketId);
+        }catch (Exception e){
+            log.error("[handle slice] submit nowPreMin task failed, err:",e);
+        }
+
+        try {
+            schedulerTask.asyncHandleSlice(now,bucketId);
+        }catch (Exception e){
+            log.error("[handle slice] submit now task failed, err:",e);
+        }
 
     }
-
-    private int getValidBucket(){
-        return schedulerAppConf.getBucketsNum();
-    }
-
-
 }

@@ -137,7 +137,7 @@ public class XTimerServiceImpl implements XTimerService {
         Date now = new Date();
         Date end = TimerUtils.GetForwardTwoMigrateStepEnd(now,migratorAppConf.getMigrateStepMinutes());
 
-        List<Date> executeTimes = TimerUtils.GetCronNextsBetween(cronExpression,now,end);
+        List<Long> executeTimes = TimerUtils.GetCronNextsBetween(cronExpression,now,end);
         if (CollectionUtils.isEmpty(executeTimes) ){
             log.warn("获取执行时机 executeTimes 为空");
             return;
@@ -159,13 +159,13 @@ public class XTimerServiceImpl implements XTimerService {
         timerMapper.update(timerModel);
     }
 
-    private List<TaskModel> batchTasksFromTimer(TimerModel timerModel, List<Date> executeTimes){
+    private List<TaskModel> batchTasksFromTimer(TimerModel timerModel, List<Long> executeTimes){
         if(timerModel == null || CollectionUtils.isEmpty(executeTimes)){
             return null;
         }
 
         List<TaskModel> taskList = new ArrayList<>();
-        for (Date runTimer:executeTimes) {
+        for (Long runTimer:executeTimes) {
             TaskModel task = new TaskModel();
             task.setApp(timerModel.getApp());
             task.setTimerId(timerModel.getTimerId());

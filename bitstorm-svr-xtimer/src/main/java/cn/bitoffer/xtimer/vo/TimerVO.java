@@ -3,6 +3,7 @@ package cn.bitoffer.xtimer.vo;
 import cn.bitoffer.xtimer.dto.NotifyHTTPParam;
 import cn.bitoffer.xtimer.enums.TimerStatus;
 import cn.bitoffer.xtimer.model.TimerModel;
+import cn.bitoffer.xtimer.utils.JSONUtil;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
@@ -49,7 +50,12 @@ public class TimerVO {
             return null;
         }
         TimerModel timerModel = new TimerModel();
-        BeanUtils.copyProperties(timerVO, timerModel);
+        timerModel.setApp(timerVO.getApp());
+        timerModel.setTimerId(timerVO.getTimerId());
+        timerModel.setName(timerVO.getName());
+        timerModel.setStatus(timerVO.getStatus().getStatus());
+        timerModel.setCron(timerVO.getCron());
+        timerModel.setNotifyHTTPParam(JSONUtil.toJsonString(timerVO.notifyHTTPParam));
         return timerModel;
     }
 
@@ -64,6 +70,15 @@ public class TimerVO {
             return null;
         }
         TimerVO timerVO = new TimerVO();
+        timerVO.setApp(timerModel.getApp());
+        timerVO.setTimerId(timerModel.getTimerId());
+        timerVO.setName(timerModel.getName());
+        timerVO.setStatus(TimerStatus.getTimerStatus(timerModel.getStatus()));
+        timerVO.setCron(timerModel.getCron());
+
+        NotifyHTTPParam httpParam = JSONUtil.parseObject(timerModel.getNotifyHTTPParam(),NotifyHTTPParam.class);
+        timerVO.setNotifyHTTPParam(httpParam);
+
         BeanUtils.copyProperties(timerModel, timerVO);
         return timerVO;
     }

@@ -6,6 +6,7 @@ import cn.bitoffer.xtimer.model.TimerModel;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 
 @Mapper
@@ -35,8 +36,20 @@ public interface TaskMapper {
     /**
      * 根据taskId查询Task
      *
-     * @param taskId
+     * @param startTime
+     * @param endTime
+     * @param taskStatus
      * @return TaskModel
      */
-    TaskModel getTaskById(@Param("taskId") Long taskId);
+    List<TaskModel> getTasksByTimeRange(@Param("startTime") Long startTime, @Param("endTime") Long endTime, @Param("taskStatus") int taskStatus);
+
+    /**
+     * 根据taskId查询Task
+     *
+     * @param timerId
+     * @param runTimer
+     * @return TaskModel
+     */
+    TaskModel getTasksByTimerIdUnix(@Param("timerId") Long timerId, @Param("runTimer") Long runTimer);
+
 }

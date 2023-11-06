@@ -1,12 +1,13 @@
 package cn.bitoffer.xtimer.utils;
 
+import cn.bitoffer.xtimer.common.ErrorCode;
+import cn.bitoffer.xtimer.exception.BusinessException;
+import cn.bitoffer.xtimer.model.TaskModel;
 import org.quartz.CronExpression;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Timer;
+import java.util.*;
 
 public class TimerUtils {
     public static String GetCreateLockKey(String app){
@@ -15,6 +16,20 @@ public class TimerUtils {
 
     public static String GetEnableLockKey(String app){
         return "enable_timer_lock_"+app;
+    }
+
+    public static String GetTimeBucketLockKey(Date time , int bucketId){
+        StringBuilder sb = new StringBuilder();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String timeStr = sdf.format(time);
+        return sb.append("time_bucket_lock_").append(timeStr).append("_").append(bucketId).toString();
+    }
+
+    public static String GetSliceMsgKey(Date time , int bucketId){
+        StringBuilder sb = new StringBuilder();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String timeStr = sdf.format(time);
+        return sb.append(timeStr).append("_").append(bucketId).toString();
     }
 
      public static String GetTokenStr() {
@@ -28,15 +43,15 @@ public class TimerUtils {
         return end;
     }
 
-    public static List<Date> GetCronNextsBetween(CronExpression cronExpression, Date now, Date end){
-        List<Date> times = new ArrayList<>();
+    public static List<Long> GetCronNextsBetween(CronExpression cronExpression, Date now, Date end){
+        List<Long> times = new ArrayList<>();
         if( end.before(now)){
             return times;
         }
 
         for (Date start =now;start.before(end);){
             Date next = cronExpression.getNextValidTimeAfter(start);
-            times.add(next);
+            times.add(next.getTime());
             start = next;
         }
         return times;
@@ -44,5 +59,16 @@ public class TimerUtils {
 
     public static String UnionTimerIDUnix(long timerId, long unix){
         return new StringBuilder().append(timerId).append("_").append(unix).toString();
+    }
+
+    public static List<Long> SplitTimerIDUnix(String timerIDUnix){
+        List<Long> longSet = new ArrayList<>();
+        String[] strList = timerIDUnix.split("_");
+        if(strList.length != 2){
+            return longSet;
+        }
+        longSet.add(Long.parseLong(strList[0]));
+        longSet.add(Long.parseLong(strList[1]));
+        return longSet;
     }
 }

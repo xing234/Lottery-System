@@ -12,4 +12,13 @@ public enum TimerStatus {
     public int getStatus() {
         return this.status;
     }
+
+    public static TimerStatus getTimerStatus(int status){
+        for (TimerStatus value:TimerStatus.values()) {
+            if(value.status == status){
+                return value;
+            }
+        }
+        return null;
+    }
 }

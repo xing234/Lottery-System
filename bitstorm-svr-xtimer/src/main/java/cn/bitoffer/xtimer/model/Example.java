@@ -51,7 +51,7 @@ public class Example extends BaseModel implements Serializable {
                 ", exampleName='" + exampleName + '\'' +
                 ", status=" + status +
                 ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
+                ", updateTime=" + modifyTime +
                 '}';
     }
 }
