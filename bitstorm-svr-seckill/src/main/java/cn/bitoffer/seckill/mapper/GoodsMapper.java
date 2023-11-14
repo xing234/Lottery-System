@@ -5,6 +5,9 @@ import cn.bitoffer.seckill.model.Goods;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mapper
 public interface GoodsMapper {
 
@@ -44,4 +47,6 @@ public interface GoodsMapper {
      * @return Goods
      */
     Goods getGoodsByNum(@Param("goodsNum") String goodsNum);
+
+    ArrayList<Goods> getGoodsList(@Param("offset") Integer offset, @Param("limit") Integer limit);
 }

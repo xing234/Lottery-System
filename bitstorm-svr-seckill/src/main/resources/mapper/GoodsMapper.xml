@@ -3,46 +3,34 @@
 
 <mapper namespace="cn.bitoffer.seckill.mapper.GoodsMapper">
     <resultMap id="goodsMap" type="cn.bitoffer.seckill.model.Goods">
-        <id column="goods_id" property="goodsId"/>
+        <id column="id" property="ID"/>
+        <result column="goods_num" property="goodsNum"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="price" property="price"/>
+        <result column="pic_url" property="picUrl"/>
+        <result column="seller" property="seller"/>
         <result column="create_time" property="createTime"/>
         <result column="modify_time" property="modifyTime"/>
-        <result column="goods_name" property="goodsName"/>
-        <result column="status" property="status"/>
     </resultMap>
 
     <sql id="Vo_Column_List">
         `id`,
-        `create_time`,
-        `modify_time`,
+        `goods_num`,
         `goods_name`,
-        `price`
+        `price`,
+        `pic_url`,
+        `seller`,
+        `create_time`,
+        `modify_time`
     </sql>
     <insert id="save" useGeneratedKeys="true" keyProperty="goods.goodsId">
-        insert into goods (`goods_name`,`status`)
+        insert into t_goods (`goods_name`,`status`)
         values (#{goods.goodsName},#{goods.status});
     </insert>
-    <delete id="deleteById">
-        delete from goods where goods_id = #{goodsId};
-    </delete>
-    <update id="update">
-        update goods
-        <set>
-            <if test="goods.goodsId != null">
-                `goods_id` = #{goods.goodsId},
-            </if>
-            <if test="goods.goodsName != null">
-                `goods_name` = #{goods.goodsName},
-            </if>
-            <if test="goods.status != null">
-                `status` = #{goods.status},
-            </if>
-        </set>
-        where goods_id = #{goods.goodsId};
-    </update>
-    <select id="getGoodsById" resultType="cn.bitoffer.seckill.model.Goods">
-        select * from goods where goods_id = #{goodsId};
+    <select id="getGoodsByNum"  resultMap="goodsMap">
+        select * from t_goods where goods_num = #{goodsNum} limit 1;
     </select>
-    <select id="getGoodsByNum" resultType="cn.bitoffer.seckill.model.Goods">
-        select * from goods where goods_id = #{goodsNum} limit 1;
+    <select id="getGoodsList"  resultMap="goodsMap">
+        select * from t_goods limit #{limit} offset #{offset};
     </select>
 </mapper>

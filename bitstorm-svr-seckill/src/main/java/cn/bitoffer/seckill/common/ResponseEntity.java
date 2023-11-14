@@ -3,6 +3,8 @@ package cn.bitoffer.seckill.common;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ResponseEntity<T> implements Serializable {
 
@@ -52,12 +54,22 @@ public class ResponseEntity<T> implements Serializable {
         return responseEntity;
     }
 
+    public static <T> ResponseEntity<T> resp(ResponseEnum re, T data) {
+        ResponseEntity<T> responseEntity = new ResponseEntity<>();
+        responseEntity.setData(data);
+        responseEntity.setCode(re.code());
+        responseEntity.setMessage(re.message());
+        responseEntity.setDatetime(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        return responseEntity;
+    }
+
     public static <T> ResponseEntity<T> ok() {
         ResponseEntity<T> responseEntity = new ResponseEntity<>();
         responseEntity.setCode(ResponseEnum.OK.code());
         responseEntity.setMessage(ResponseEnum.OK.message());
         return responseEntity;
     }
+
 
     public static <T> ResponseEntity<T> fail() {
         ResponseEntity<T> responseEntity = new ResponseEntity<>();
@@ -80,4 +92,5 @@ public class ResponseEntity<T> implements Serializable {
         responseEntity.setData(data);
         return responseEntity;
     }
+
 }
