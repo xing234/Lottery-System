@@ -12,6 +12,7 @@
 
     <modules>
         <module>bitstorm-svr-api</module>
+        <module>bitstorm-svr-common</module>
         <module>bitstorm-svr-testprovider</module>
         <module>bitstorm-svr-seckill</module>
         <module>bitstorm-svr-testconsumer</module>

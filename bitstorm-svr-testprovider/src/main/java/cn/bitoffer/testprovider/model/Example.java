@@ -1,6 +1,6 @@
 package cn.bitoffer.testprovider.model;
 
-import cn.bitoffer.testprovider.common.BaseModel;
+import cn.bitoffer.common.model.BaseModel;
 
 import java.io.Serializable;
 
@@ -51,7 +51,7 @@ public class Example extends BaseModel implements Serializable {
                 ", exampleName='" + exampleName + '\'' +
                 ", status=" + status +
                 ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
+                ", updateTime=" + modifyTime +
                 '}';
     }
 }

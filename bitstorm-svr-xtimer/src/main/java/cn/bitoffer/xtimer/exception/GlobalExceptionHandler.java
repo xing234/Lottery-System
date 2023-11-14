@@ -1,6 +1,6 @@
 package cn.bitoffer.xtimer.exception;
 
-import cn.bitoffer.xtimer.common.ResponseEntity;
+import cn.bitoffer.common.model.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

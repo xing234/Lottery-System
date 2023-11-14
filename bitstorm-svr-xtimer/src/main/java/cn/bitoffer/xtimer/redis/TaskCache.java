@@ -1,6 +1,6 @@
 package cn.bitoffer.xtimer.redis;
 
-import cn.bitoffer.xtimer.common.ErrorCode;
+import cn.bitoffer.xtimer.exception.ErrorCode;
 import cn.bitoffer.xtimer.common.conf.SchedulerAppConf;
 import cn.bitoffer.xtimer.exception.BusinessException;
 import cn.bitoffer.xtimer.model.TaskModel;

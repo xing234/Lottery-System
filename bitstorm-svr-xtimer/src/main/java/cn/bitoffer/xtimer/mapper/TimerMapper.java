@@ -1,7 +1,6 @@
 package cn.bitoffer.xtimer.mapper;
 
 
-import cn.bitoffer.xtimer.model.Example;
 import cn.bitoffer.xtimer.model.TimerModel;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
