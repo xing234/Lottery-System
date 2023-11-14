@@ -1,13 +1,6 @@
-package cn.bitoffer.xtimer.vo;
+package cn.bitoffer.api.dto.xtimer;
 
-import cn.bitoffer.xtimer.dto.NotifyHTTPParam;
-import cn.bitoffer.xtimer.enums.TimerStatus;
-import cn.bitoffer.xtimer.model.TimerModel;
-import org.springframework.beans.BeanUtils;
-
-import java.util.List;
-
-public class TimerVO {
+public class TimerDTO {
     /**
      * 定时任务ID
      */
@@ -26,7 +19,7 @@ public class TimerVO {
     /**
      * 定时任务-状态
      */
-    private TimerStatus status;
+    private int status;
 
     /**
      *  定时任务-定时配置
@@ -37,36 +30,6 @@ public class TimerVO {
      * Name 定时任务-回调参数配置
      */
     private NotifyHTTPParam notifyHTTPParam;
-
-    /**
-     * 包装类转对象
-     *
-     * @param timerVO
-     * @return
-     */
-    public static TimerModel voToObj(TimerVO timerVO) {
-        if (timerVO == null) {
-            return null;
-        }
-        TimerModel timerModel = new TimerModel();
-        BeanUtils.copyProperties(timerVO, timerModel);
-        return timerModel;
-    }
-
-    /**
-     * 对象转包装类
-     *
-     * @param timerModel
-     * @return
-     */
-    public static TimerVO objToVo(TimerModel timerModel) {
-        if (timerModel == null) {
-            return null;
-        }
-        TimerVO timerVO = new TimerVO();
-        BeanUtils.copyProperties(timerModel, timerVO);
-        return timerVO;
-    }
 
     public Long getTimerId() {
         return timerId;
@@ -92,11 +55,11 @@ public class TimerVO {
         this.name = name;
     }
 
-    public TimerStatus getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(TimerStatus status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

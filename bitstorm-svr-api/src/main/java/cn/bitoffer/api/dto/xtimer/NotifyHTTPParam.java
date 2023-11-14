@@ -1,4 +1,4 @@
-package cn.bitoffer.xtimer.dto;
+package cn.bitoffer.api.dto.xtimer;
 
 import java.util.Map;
 

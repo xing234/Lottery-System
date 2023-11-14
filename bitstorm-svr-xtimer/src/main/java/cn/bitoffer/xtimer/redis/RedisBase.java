@@ -615,9 +615,9 @@ public final class RedisBase {
      * @param token 值
      * @return 成功个数
      */
-    public long execute(RedisScript<Long> script,List<String> keys, String token){
+    public long execute(RedisScript<Long> script,List<String> keys, String token, Long expire){
         try {
-            Long execute = redisTemplate.execute(script, keys, token);
+            Long execute = redisTemplate.execute(script, keys, token, expire);
             return execute;
         } catch (Exception e) {
             e.printStackTrace();

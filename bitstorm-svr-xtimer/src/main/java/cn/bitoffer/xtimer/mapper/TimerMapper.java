@@ -6,6 +6,8 @@ import cn.bitoffer.xtimer.model.TimerModel;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface TimerMapper {
 
@@ -31,10 +33,18 @@ public interface TimerMapper {
     void update(@Param("timerModel") TimerModel timerModel);
 
     /**
-     * 根据ExampleId查询Example
+     * 根据timerId查询TimerModel
      *
      * @param timerId
      * @return TimerModel
      */
     TimerModel getTimerById(@Param("timerId") Long timerId);
+
+    /**
+     * 根据status查询TimerModel
+     *
+     * @param status
+     * @return TimerModel
+     */
+    List<TimerModel> getTimersByStatus(@Param("status") int status);
 }
