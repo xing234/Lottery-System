@@ -7,6 +7,7 @@ import cn.bitoffer.seckill.service.SecKillService;
 import com.alibaba.nacos.shaded.com.google.gson.Gson;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,10 @@ public class SecKillServiceImpl implements SecKillService {
     private GoodsMapper goodsMapper;
 
     @Autowired
+    private QuotaMapper quotaMapper;
+    private UserQuotaMapper userQuotaMapper;
+
+    @Autowired
     private SecKillRecordMapper recordMapper;
 
     @Autowired
@@ -34,7 +39,9 @@ public class SecKillServiceImpl implements SecKillService {
     @Autowired
     private RedisUtil redisUtil;
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
+
 
 
 
@@ -52,7 +59,7 @@ public class SecKillServiceImpl implements SecKillService {
     @Transactional
     public String secKillV1(String traceID, Long userID, String goodsNum, Integer num) {
         Goods goods = goodsMapper.getGoodsByNum(goodsNum);
-        return secKillInStore(traceID, userID, goods, num);
+        return secKillInStore(traceID, userID, goods, "", num);
     }
 
     @Override
@@ -66,11 +73,12 @@ public class SecKillServiceImpl implements SecKillService {
             System.out.println("preDescStock err "+e.getMessage());
             return "";
         }
-        return secKillInStore(traceID, userID, goods, num);
+        return secKillInStore(traceID, userID, goods, secNum, num);
     }
 
     @Override
     public String secKillV3(String traceID, Long userID, String goodsNum, Integer num) {
+        kafkaTemplate.send("tp-seckill","aaaaaa");
         Goods goods = goodsMapper.getGoodsByNum(goodsNum);
         String secNum = UUID.randomUUID().toString();
         try {
@@ -79,20 +87,16 @@ public class SecKillServiceImpl implements SecKillService {
             System.out.println("preDescStock err "+e.getMessage());
             return "";
         }
-        kafkaTemplate.send("user", user).addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                log.info("sendMessage onFailure:{}", throwable.getMessage());
-            }
-
-            @Override
-            public void onSuccess(SendResult<String, Object> result) {
-                log.info("sendMessage onSuccess:{},{},{}", result.getRecordMetadata().topic(), result.getRecordMetadata().partition(), result.getRecordMetadata().offset());
-            }
-        });
-
-
-        return secKillInStore(traceID, userID, goods, num);
+        SecKillMsg skMsg = new SecKillMsg();
+        skMsg.goods = goods;
+        skMsg.secNum = secNum;
+        skMsg.traceID = traceID;
+        skMsg.userID = userID;
+        skMsg.num = num;
+        Gson gson = new Gson();
+        String msg = gson.toJson(skMsg);
+        kafkaTemplate.send("tp-seckill","aaaaaa");
+        return secNum;
     }
 
     public void preDescStock(String traceID, Long userID, Goods goods, Integer num, String secNum, String secRecord) throws Exception {
@@ -107,6 +111,8 @@ public class SecKillServiceImpl implements SecKillService {
         psRecord.setModifyTime(date);
         Gson gson = new Gson();
         String recordStr = gson.toJson(psRecord);
+        recordStr = "";
+        System.out.println();
         List<Object> result = redisUtil.executeLua(secKillLua, Arrays.asList(""+userID, ""+goods.getID(), ""+num, secNum, recordStr));
         Long y = Long.valueOf(String.valueOf(result.get(0))).longValue();
         Integer x = y.intValue();
@@ -125,10 +131,30 @@ public class SecKillServiceImpl implements SecKillService {
                 break;
         }
     }
+    public Boolean judgeQuota(long userID, long goodsID, Integer num) {
+        UserQuota userQuota = userQuotaMapper.getUserGoodsUserQuota(userID, goodsID);
+        Integer userKilledNum = userQuota.getKilledNum();
+        Integer userQuotaNum = userQuota.getNum();
+        if (userQuotaNum == 0) {
+           Quota globalQuota = quotaMapper.getGoodsQuota(goodsID);
+           userQuotaNum =  globalQuota.getNum();
+        }
+        Integer leftQuota = userQuotaNum - userKilledNum;
+        if (leftQuota >= num) {
+            return true;
+        }
+        return false;
+    }
+    public String secKillDB(String traceID, Long userID, Goods goods, String secNum, Integer num) {
+        judgeQuota(userID, goods.getID(), num);
+        return "";
+    }
     @Transactional
-    public String secKillInStore(String traceID, Long userID, Goods goods, Integer num) {
+    public String secKillInStore(String traceID, Long userID, Goods goods, String secNum, Integer num) {
         try {
-            String secNum = UUID.randomUUID().toString();
+            if (secNum == "") {
+                secNum = UUID.randomUUID().toString();
+            }
             String orderNum = UUID.randomUUID().toString();
             stockMapper.descStock(goods.getID(), num);
             Order order = new Order();
@@ -166,7 +192,7 @@ public class SecKillServiceImpl implements SecKillService {
         public Long userID;
         public Integer num;
     }
-
+    public String secKillTopic = "tp-seckill";
     private String secKillLua = "-- key1：用户id，key2：商品id key3：抢购多少个 key4：秒杀单号, keys5:秒杀记录\n" +
             "-- keyLimit是 SK:Limit:goodsID\n" +
             "local keyLimit = \"SK:Limit\" .. KEYS[2]\n" +
