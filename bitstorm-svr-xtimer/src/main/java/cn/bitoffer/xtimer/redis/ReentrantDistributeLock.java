@@ -1,11 +1,9 @@
 package cn.bitoffer.xtimer.redis;
 
-import cn.bitoffer.xtimer.common.ErrorCode;
-import cn.bitoffer.xtimer.exception.BusinessException;
+import cn.bitoffer.common.redis.RedisBase;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 

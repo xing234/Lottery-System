@@ -11,13 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient("bitstorm-svr-xtimer")
 public interface XTimerClient {
 
-    /**
-     * 测试
-     *
-     */
-    @GetMapping(value = "/call")
-    public String call(@RequestParam("name") String name);
-
     @PostMapping(value = "/createTimer")
     public Long createTimer(@RequestBody TimerDTO timerDTO);
 

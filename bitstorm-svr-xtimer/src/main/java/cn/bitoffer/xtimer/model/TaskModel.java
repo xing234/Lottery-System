@@ -1,9 +1,8 @@
 package cn.bitoffer.xtimer.model;
 
-import cn.bitoffer.xtimer.common.BaseModel;
+import cn.bitoffer.common.model.BaseModel;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class TaskModel extends BaseModel implements Serializable {
 

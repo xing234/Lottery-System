@@ -1,8 +1,6 @@
 package cn.bitoffer.xtimer.service.scheduler;
 
-import cn.bitoffer.xtimer.common.ErrorCode;
 import cn.bitoffer.xtimer.common.conf.SchedulerAppConf;
-import cn.bitoffer.xtimer.exception.BusinessException;
 import cn.bitoffer.xtimer.redis.ReentrantDistributeLock;
 import cn.bitoffer.xtimer.service.trigger.TriggerWorker;
 import cn.bitoffer.xtimer.utils.TimerUtils;
@@ -10,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 

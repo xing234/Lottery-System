@@ -1,4 +1,4 @@
-package cn.bitoffer.testprovider.common;
+package cn.bitoffer.common.model;
 
 public enum ResponseEnum {
     OK(0, "ok"),

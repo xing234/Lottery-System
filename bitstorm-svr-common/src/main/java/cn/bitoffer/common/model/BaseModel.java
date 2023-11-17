@@ -1,4 +1,4 @@
-package cn.bitoffer.testprovider.common;
+package cn.bitoffer.common.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,7 +13,7 @@ public class BaseModel implements Serializable {
 	/**
 	 * 更新时间
 	 */
-	protected Date updateTime;
+	protected Date modifyTime;
 
 	public Date getCreateTime() {
 		return createTime;
@@ -23,17 +23,17 @@ public class BaseModel implements Serializable {
 		this.createTime = createTime;
 	}
 
-	public Date getUpdateTime() {
-		return updateTime;
+	public Date getModifyTime() {
+		return modifyTime;
 	}
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
 	}
 
 	@Override
 	public String toString() {
-		return "BaseModel{" + "createTime=" + createTime + ", updateTime=" + updateTime + '}';
+		return "BaseModel{" + "createTime=" + createTime + ", updateTime=" + modifyTime + '}';
 	}
 
 }

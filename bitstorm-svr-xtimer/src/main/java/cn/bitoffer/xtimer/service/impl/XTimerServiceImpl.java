@@ -1,18 +1,13 @@
 package cn.bitoffer.xtimer.service.impl;
 
 import cn.bitoffer.api.dto.xtimer.TimerDTO;
-import cn.bitoffer.xtimer.common.ErrorCode;
-import cn.bitoffer.xtimer.common.conf.MigratorAppConf;
-import cn.bitoffer.xtimer.enums.TaskStatus;
+import cn.bitoffer.xtimer.exception.ErrorCode;
 import cn.bitoffer.xtimer.enums.TimerStatus;
 import cn.bitoffer.xtimer.exception.BusinessException;
 import cn.bitoffer.xtimer.manager.MigratorManager;
-import cn.bitoffer.xtimer.mapper.TaskMapper;
 import cn.bitoffer.xtimer.mapper.TimerMapper;
-import cn.bitoffer.xtimer.model.TaskModel;
 import cn.bitoffer.xtimer.model.TimerModel;
 import cn.bitoffer.xtimer.redis.ReentrantDistributeLock;
-import cn.bitoffer.xtimer.redis.TaskCache;
 import cn.bitoffer.xtimer.service.XTimerService;
 import cn.bitoffer.xtimer.utils.TimerUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +15,7 @@ import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
