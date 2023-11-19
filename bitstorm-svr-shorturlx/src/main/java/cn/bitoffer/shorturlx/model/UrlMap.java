@@ -1,21 +1,10 @@
-package cn.bitoffer.testprovider.model;
+package cn.bitoffer.shorturlx.model;
 
-import cn.bitoffer.testprovider.common.BaseModel;
-import lombok.Data;
+import cn.bitoffer.shorturlx.common.BaseModel;
 
 import java.io.Serializable;
-import java.util.Date;
 
-
-/**
- * @author 狂飙训练营
- */
-@Data
-public class UrlMap extends BaseModel implements Serializable {
-    private String id;
-    private String long_url;
-    private String short_url;
-    private Date created_at;;
+public class Example extends BaseModel implements Serializable {
     /**
      * Id
      */
@@ -66,5 +55,3 @@ public class UrlMap extends BaseModel implements Serializable {
                 '}';
     }
 }
-
-
