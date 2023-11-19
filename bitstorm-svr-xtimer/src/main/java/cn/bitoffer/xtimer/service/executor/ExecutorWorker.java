@@ -1,6 +1,6 @@
 package cn.bitoffer.xtimer.service.executor;
 
-import cn.bitoffer.xtimer.common.ErrorCode;
+import cn.bitoffer.xtimer.exception.ErrorCode;
 import cn.bitoffer.api.dto.xtimer.NotifyHTTPParam;
 import cn.bitoffer.xtimer.enums.TaskStatus;
 import cn.bitoffer.xtimer.enums.TimerStatus;

@@ -1,11 +1,9 @@
 package cn.bitoffer.xtimer.redis;
 
-import cn.bitoffer.xtimer.common.ErrorCode;
-import cn.bitoffer.xtimer.exception.BusinessException;
+import cn.bitoffer.common.redis.RedisBase;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +33,7 @@ public class ReentrantDistributeLock {
     }
 
     public void unlock(String key,String token){
-        Long execute = redisBase.execute(getUnlockScript(), Arrays.asList(key), token, null);
+        Long execute = redisBase.executeLua(getUnlockScript(), Arrays.asList(key), token, null);
         if (execute.longValue() == 0) {
             log.info("释放锁{}失败:{}", key, execute);
         } else if (execute.longValue() == 1) {
@@ -57,7 +55,7 @@ public class ReentrantDistributeLock {
     }
 
     public void expireLock(String key, String token, long expireSeconds){
-        Long execute = redisBase.execute(getUnlockScript(), Arrays.asList(key), token, expireSeconds);
+        Long execute = redisBase.executeLua(getUnlockScript(), Arrays.asList(key), token, expireSeconds);
         if (execute.longValue() == 0) {
             log.info("延期{}失败:{}", key, execute);
         } else if (execute.longValue() == 1) {

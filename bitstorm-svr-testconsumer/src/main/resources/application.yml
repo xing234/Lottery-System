@@ -10,6 +10,14 @@ spring:
         server-addr: 127.0.0.1:8848
         username: nacos
         password: nacos
+  redis:
+    host: localhost
+    port: 6379
+    password: root2023
+    database: 0
+    jedis:
+      pool:
+        max-active: 8 #最大连接数
   kafka:
     #以逗号分隔的主机：端口对列表，用于建立与Kafka的连接
     bootstrap-servers: 127.0.0.1:9092

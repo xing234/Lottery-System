@@ -17,4 +17,6 @@ public interface SecKillService {
     String secKillV2(String traceID, Long userID, String goodsNum, Integer num);
 
     String secKillV3(String traceID, Long userID, String goodsNum, Integer num);
+
+    String secKillInStore(String traceID, Long userID, Goods goods, String secNum, Integer num);
 }

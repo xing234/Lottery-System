@@ -23,7 +23,7 @@
         `create_time`,
         `modify_time`
     </sql>
-    <insert id="save" useGeneratedKeys="true" keyProperty="goods.goodsId">
+    <insert id="save" useGeneratedKeys="true" keyProperty="goods.ID">
         insert into t_goods (`goods_name`,`status`)
         values (#{goods.goodsName},#{goods.status});
     </insert>

@@ -1,6 +1,6 @@
 package cn.bitoffer.xtimer.service.trigger;
 
-import cn.bitoffer.xtimer.common.ErrorCode;
+import cn.bitoffer.xtimer.exception.ErrorCode;
 import cn.bitoffer.xtimer.common.conf.TriggerAppConf;
 import cn.bitoffer.xtimer.enums.TaskStatus;
 import cn.bitoffer.xtimer.exception.BusinessException;
@@ -8,12 +8,8 @@ import cn.bitoffer.xtimer.mapper.TaskMapper;
 import cn.bitoffer.xtimer.model.TaskModel;
 import cn.bitoffer.xtimer.redis.TaskCache;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

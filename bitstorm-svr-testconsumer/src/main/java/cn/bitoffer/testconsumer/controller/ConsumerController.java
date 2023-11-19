@@ -2,6 +2,7 @@ package cn.bitoffer.testconsumer.controller;
 
 import cn.bitoffer.api.feign.TestProviderClient;
 import cn.bitoffer.testconsumer.common.ResponseEntity;
+import cn.bitoffer.testconsumer.redis.RedisExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,6 +21,9 @@ public class ConsumerController {
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
 
+    @Autowired
+    private RedisExample redisExample;
+
     @GetMapping("/consumer")
     public ResponseEntity<String> consumer() {
         String resultStr = providerClient.call("hello");
@@ -37,6 +41,15 @@ public class ConsumerController {
         kafkaTemplate.send("hello-world","来自Kafka的测试消息【ABAB】");
         return ResponseEntity.ok(
                 "发送消息成功"
+        );
+    }
+
+    @GetMapping("/redisTest")
+    public ResponseEntity<String> redisTest() {
+        // 消息队列发送消息
+        redisExample.luaExample();
+        return ResponseEntity.ok(
+                "成功"
         );
     }
 }

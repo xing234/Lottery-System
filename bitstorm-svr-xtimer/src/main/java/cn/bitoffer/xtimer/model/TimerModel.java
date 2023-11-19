@@ -2,7 +2,7 @@ package cn.bitoffer.xtimer.model;
 
 import cn.bitoffer.api.dto.xtimer.NotifyHTTPParam;
 import cn.bitoffer.api.dto.xtimer.TimerDTO;
-import cn.bitoffer.xtimer.common.BaseModel;
+import cn.bitoffer.common.model.BaseModel;
 import cn.bitoffer.xtimer.utils.JSONUtil;
 import org.springframework.beans.BeanUtils;
 

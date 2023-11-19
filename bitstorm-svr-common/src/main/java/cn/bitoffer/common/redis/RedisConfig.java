@@ -1,4 +1,4 @@
-package cn.bitoffer.testprovider.redis;
+package cn.bitoffer.common.redis;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

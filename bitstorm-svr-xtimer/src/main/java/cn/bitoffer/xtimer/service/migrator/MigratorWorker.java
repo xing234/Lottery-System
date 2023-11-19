@@ -1,16 +1,13 @@
 package cn.bitoffer.xtimer.service.migrator;
 
-import cn.bitoffer.xtimer.common.ErrorCode;
 import cn.bitoffer.xtimer.common.conf.MigratorAppConf;
 import cn.bitoffer.xtimer.enums.TimerStatus;
-import cn.bitoffer.xtimer.exception.BusinessException;
 import cn.bitoffer.xtimer.manager.MigratorManager;
 import cn.bitoffer.xtimer.mapper.TimerMapper;
 import cn.bitoffer.xtimer.model.TimerModel;
 import cn.bitoffer.xtimer.redis.ReentrantDistributeLock;
 import cn.bitoffer.xtimer.utils.TimerUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

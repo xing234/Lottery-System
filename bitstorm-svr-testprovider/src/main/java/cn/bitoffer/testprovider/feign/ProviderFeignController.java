@@ -29,6 +29,10 @@ public class ProviderFeignController implements TestProviderClient {
         //redis
         exampleService.cacheExampleToRedis(example);
         Example example1 = exampleService.getExampleFromRedis(example.getExampleId().toString());
+
+        //redis lua
+
+
         System.out.println(example1);
 
         return "服务提供者1：" + name;

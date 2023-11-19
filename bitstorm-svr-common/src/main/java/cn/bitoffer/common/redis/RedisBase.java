@@ -1,4 +1,12 @@
-package cn.bitoffer.testprovider.redis;
+package cn.bitoffer.common.redis;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,17 +14,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
-
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
 @Component
-public final class RedisUtil {
+public final class RedisBase {
 
-    @Resource
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 普通缓存放入
@@ -605,6 +610,36 @@ public final class RedisUtil {
             return 0;
         }
     }
+
+    /**
+     * 执行lua脚本
+     *
+     * @param script   lua脚本
+     * @param keys keys
+     * @param token 值
+     * @return 成功个数
+     */
+    public long executeLua(RedisScript<Long> script, List<String> keys, String token, Long expire){
+        try {
+            Long execute = redisTemplate.execute(script, keys, token, expire);
+            return execute;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public List<String> executeLuaReturnString(String redisScript, List<String> keys) {
+        try {
+            List result = stringRedisTemplate.execute(new DefaultRedisScript<List>(redisScript, List.class), keys);
+            System.out.println("result result : " + result);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
 
 

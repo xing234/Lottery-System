@@ -1,7 +1,5 @@
 package cn.bitoffer.xtimer.exception;
 
-import cn.bitoffer.xtimer.common.ErrorCode;
-
 /**
  * 自定义异常类
  *

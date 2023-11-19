@@ -1,4 +1,4 @@
-package cn.bitoffer.xtimer.common;
+package cn.bitoffer.common.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -42,6 +42,7 @@ public class ResponseEntity<T> implements Serializable {
     public void setData(T data) {
         this.data = data;
     }
+
 
     public static <T> ResponseEntity<T> ok(T data) {
         ResponseEntity<T> responseEntity = new ResponseEntity<>();
