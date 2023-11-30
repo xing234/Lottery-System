@@ -48,6 +48,7 @@ public class ResponseEntity<T> implements Serializable {
         ResponseEntity<T> responseEntity = new ResponseEntity<>();
         responseEntity.setData(data);
         responseEntity.setCode(ResponseEnum.OK.code());
+        responseEntity.setMessage(ResponseEnum.OK.message());
         responseEntity.setDatetime(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
         return responseEntity;
     }

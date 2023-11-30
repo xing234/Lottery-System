@@ -17,6 +17,8 @@
         <module>bitstorm-svr-seckill</module>
         <module>bitstorm-svr-testconsumer</module>
         <module>bitstorm-svr-xtimer</module>
+        <module>bitstorm-svr-asyncflow</module>
+        <module>bitstorm-svr-shorturlx</module>
     </modules>
 
 

@@ -2,8 +2,8 @@ package cn.bitoffer.shorturlx.common;
 
 public enum ResponseEnum {
     OK(0, "ok"),
-    FAIL(1, "fail"),
-    ;
+    FAIL(1, "fail"),;
+
     private final int code;
     private final String message;
 

@@ -1,40 +1,17 @@
 package cn.bitoffer.shorturlx.mapper;
 
 
-import cn.bitoffer.shorturlx.model.Example;
+import cn.bitoffer.shorturlx.model.UrlMap;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface ExampleMapper {
+public interface UrlMapMapper {
 
-    /**
-     * 保存Example
-     *
-     * @param example
-     */
-    void save(@Param("example") Example example);
 
-    /**
-     * 根据ExampleId删除Example
-     *
-     * @param exampleId
-     */
-    void deleteById(@Param("exampleId") Long exampleId);
+    void dbCreate(@Param("urlMap") UrlMap urlMap);
 
-    /**
-     * 更新Example
-     *
-     * @param example
-     */
-    void update(@Param("example") Example example);
-
-    /**
-     * 根据ExampleId查询Example
-     *
-     * @param exampleId
-     * @return Example
-     */
-    Example getExampleById(@Param("exampleId") Long exampleId);
-
+    String dbGetShortUrl(@Param("longUrl") String longUrl);
+    String dbGetLongUrl(@Param("shortUrl") String shortUrl);
+    void dbUpdate(@Param("shortUrl") String shortUrl, @Param("longUrl") String longUrl);
 }

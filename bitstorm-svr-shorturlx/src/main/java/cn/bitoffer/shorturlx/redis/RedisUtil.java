@@ -1,20 +1,19 @@
 package cn.bitoffer.shorturlx.redis;
 
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
-
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
 @Component
 public final class RedisUtil {
-
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -605,6 +604,17 @@ public final class RedisUtil {
             return 0;
         }
     }
-}
 
+
+    public List<Object> executeLua(String redisScript, List<String> keys, List<Object> args) {
+        try {
+            List<Object> result = redisTemplate.execute(new DefaultRedisScript<>(redisScript, List.class), keys, args);
+            System.out.println("result result : " + result);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+}
 

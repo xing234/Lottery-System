@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>bitstorm-svr-shorturlx</artifactId>
-    <description>服务模板</description>
+    <description>短链微服务</description>
 
     <dependencies>
         <!--注册中心客户端-->
@@ -63,6 +63,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.2</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <!--spring boot 项目打包插件-->
@@ -71,6 +77,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>15</source>
+                    <target>15</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

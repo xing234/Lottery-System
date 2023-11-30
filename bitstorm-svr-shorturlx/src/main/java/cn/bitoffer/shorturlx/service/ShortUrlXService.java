@@ -1,19 +1,19 @@
 package cn.bitoffer.shorturlx.service;
 
-import cn.bitoffer.shorturlx.model.Example;
+/**
+ * @author 狂飙训练营
+ */
+public interface ShortUrlXService {
 
-public interface ExampleService {
+    String getV1LongUrl(String shortUrl);
+    String getV2LongUrl(String shortUrl);
 
-    void save(Example example);
+    String getV3LongUrl(String shortUrl);
 
-    void update(Example example);
+    String createV1ShortUrl(String longUrl);
 
-    Example getExampleById(Long id);
+    String createV2ShortUrl(String longUrl);
 
-    void deleteExampleById(Long id);
-
-    void cacheExampleToRedis(Example example);
-
-    Example getExampleFromRedis(String exampleId);
+    String createV3ShortUrl(String longUrl);
 
 }

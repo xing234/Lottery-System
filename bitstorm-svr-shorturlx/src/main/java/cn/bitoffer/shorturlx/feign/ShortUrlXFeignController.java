@@ -1,7 +1,6 @@
 package cn.bitoffer.shorturlx.feign;
 
 import cn.bitoffer.api.feign.TestProviderClient;
-import cn.bitoffer.shorturlx.model.UrlMap;
 import cn.bitoffer.shorturlx.service.ShortUrlXService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
-public class ProviderFeignController implements TestProviderClient {
+public class ShortUrlXFeignController implements TestProviderClient {
 
     @Autowired
     private ShortUrlXService shortUrlXService;
+    public  String call(String longUrl) {
+        return shortUrlXService.createV3ShortUrl(longUrl);
+    }
+
     // public String call(String name) {
     //
     //     UrlMap urlMap = new UrlMap(longUrl);

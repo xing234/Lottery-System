@@ -1,57 +1,31 @@
 package cn.bitoffer.shorturlx.model;
 
 import cn.bitoffer.shorturlx.common.BaseModel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Date;
 
-public class Example extends BaseModel implements Serializable {
-    /**
-     * Id
-     */
-    private Long exampleId;
-
-    /**
-     * Name
-     */
-    private String exampleName;
-
-    /**
-     * Status
-     */
-    private Integer status;
-
-    public Long getExampleId() {
-        return exampleId;
-    }
-
-    public void setExampleId(Long exampleId) {
-        this.exampleId = exampleId;
-    }
-
-    public String getExampleName() {
-        return exampleName;
-    }
-
-    public void setExampleName(String exampleName) {
-        this.exampleName = exampleName;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
+@EqualsAndHashCode(callSuper = true)
+@Data
+public class UrlMap extends BaseModel implements Serializable {
+    private Long id;
+    private String longUrl;
+    private String shortUrl;
+    private Date createdAt;;
 
     @Override
     public String toString() {
-        return "Example{" +
-                "exampleId=" + exampleId +
-                ", exampleName='" + exampleName + '\'' +
-                ", status=" + status +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                '}';
+        return "UrlMap{" + "id='" + id + '\'' + ", longUrl='" + longUrl + '\'' + ", shortUrl='" + shortUrl + '\'' + ", createdAt=" + createdAt + '}';
+    }
+
+    public UrlMap(String longUrl) {
+        this.longUrl = longUrl;
+    }
+
+    public UrlMap(String  longUrl, String shortUrl) {
+        this.longUrl = longUrl;
+        this.shortUrl = shortUrl;
     }
 }
