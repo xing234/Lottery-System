@@ -1,4 +1,4 @@
-package cn.bitoffer.testconsumer.utils;
+package cn.bitoffer.lottery.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;

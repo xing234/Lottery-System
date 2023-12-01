@@ -1,14 +1,8 @@
-package cn.bitoffer.testconsumer.kafka.consumer;
+package cn.bitoffer.lottery.kafka.consumer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.config.KafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.listener.AbstractMessageListenerContainer;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;

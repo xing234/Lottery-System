@@ -1,13 +1,11 @@
-package cn.bitoffer.testconsumer.redis;
+package cn.bitoffer.lottery.redis;
 
 import cn.bitoffer.common.redis.RedisBase;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Component

@@ -1,4 +1,4 @@
-package cn.bitoffer.testconsumer.kafka.config;
+package cn.bitoffer.lottery.kafka.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.springframework.beans.factory.annotation.Autowired;

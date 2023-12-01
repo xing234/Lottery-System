@@ -19,6 +19,7 @@
         <module>bitstorm-svr-xtimer</module>
         <module>bitstorm-svr-asyncflow</module>
         <module>bitstorm-svr-shorturlx</module>
+        <module>bitstorm-svr-lottery</module>
     </modules>
 
 

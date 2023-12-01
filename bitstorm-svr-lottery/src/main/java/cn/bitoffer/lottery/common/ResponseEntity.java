@@ -1,4 +1,4 @@
-package cn.bitoffer.testconsumer.common;
+package cn.bitoffer.lottery.common;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

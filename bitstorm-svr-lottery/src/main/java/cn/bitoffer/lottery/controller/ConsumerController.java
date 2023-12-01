@@ -1,8 +1,8 @@
-package cn.bitoffer.testconsumer.controller;
+package cn.bitoffer.lottery.controller;
 
 import cn.bitoffer.api.feign.TestProviderClient;
-import cn.bitoffer.testconsumer.common.ResponseEntity;
-import cn.bitoffer.testconsumer.redis.RedisExample;
+import cn.bitoffer.lottery.common.ResponseEntity;
+import cn.bitoffer.lottery.redis.RedisExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;

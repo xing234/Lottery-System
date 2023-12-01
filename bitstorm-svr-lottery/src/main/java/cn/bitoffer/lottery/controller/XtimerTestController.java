@@ -1,9 +1,9 @@
-package cn.bitoffer.testconsumer.controller;
+package cn.bitoffer.lottery.controller;
 
 import cn.bitoffer.api.dto.xtimer.NotifyHTTPParam;
 import cn.bitoffer.api.dto.xtimer.TimerDTO;
 import cn.bitoffer.api.feign.XTimerClient;
-import cn.bitoffer.testconsumer.common.ResponseEntity;
+import cn.bitoffer.lottery.common.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 

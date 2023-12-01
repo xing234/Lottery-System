@@ -1,4 +1,4 @@
-package cn.bitoffer.testconsumer.interceptor;
+package cn.bitoffer.lottery.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +26,7 @@ public class LogInterceptorA {
     /**
      * 执行拦截
      */
-    @Around("execution(* cn.bitoffer.testconsumer.controller.*.*(..))")
+    @Around("execution(* cn.bitoffer.lottery.controller.*.*(..))")
     public Object doInterceptor(ProceedingJoinPoint point) throws Throwable {
         // 计时
         StopWatch stopWatch = new StopWatch();
