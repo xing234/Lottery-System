@@ -54,6 +54,7 @@ public class TriggerTimerTask extends TimerTask {
         Date tStart = new Date(startTime.getTime() + count*triggerAppConf.getZrangeGapSeconds()*1000L);
         if(tStart.compareTo(endTime) >= 0){
             latch.countDown();
+            return;
         }
         // 处理任务
         try{
@@ -72,6 +73,9 @@ public class TriggerTimerTask extends TimerTask {
         }
         for (TaskModel task :tasks) {
             try {
+                if(task == null){
+                    continue;
+                }
                 triggerPoolTask.runExecutor(task);
             }catch (Exception e){
                 log.error("executor run task error,task"+task.toString());
@@ -96,13 +100,12 @@ public class TriggerTimerTask extends TimerTask {
             tasks= taskCache.getTasksFromCache(minuteBucketKey,start.getTime(),end.getTime());
         }catch (Exception e){
             log.error("getTasksFromCache error: " ,e);
-        }
-
-        // 缓存miss,走数据库
-        try{
-            tasks = taskMapper.getTasksByTimeRange(start.getTime(),end.getTime()-1, TaskStatus.NotRun.getStatus());
-        }catch (Exception e){
-            log.error("getTasksByConditions error: " ,e);
+            // 缓存miss,走数据库
+            try{
+                tasks = taskMapper.getTasksByTimeRange(start.getTime(),end.getTime()-1, TaskStatus.NotRun.getStatus());
+            }catch (Exception e1){
+                log.error("getTasksByConditions error: " ,e1);
+            }
         }
         return tasks;
     }

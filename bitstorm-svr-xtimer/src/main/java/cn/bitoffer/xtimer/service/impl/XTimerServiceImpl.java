@@ -110,7 +110,16 @@ public class XTimerServiceImpl implements XTimerService {
         if(timerModel == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"激活失败，timer不存在：timerId"+id);
         }
+        // 2. 校验状态
+        if(timerModel.getStatus() == TimerStatus.Enable.getStatus()){
+            log.warn("Timer非Unable状态，激活失败，timerId:"+timerModel.getTimerId());
+        }
+        // 修改 timer 状态为激活态
+        timerModel.setStatus(TimerStatus.Enable.getStatus());
+        timerMapper.update(timerModel);
+        //迁移数据
         migratorManager.migrateTimer(timerModel);
+
     }
 
 

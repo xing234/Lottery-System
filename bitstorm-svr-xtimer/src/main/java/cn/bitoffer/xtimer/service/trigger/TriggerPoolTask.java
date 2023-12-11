@@ -24,6 +24,9 @@ public class TriggerPoolTask {
 
     @Async("triggerPool")
     public void runExecutor(TaskModel task) {
+        if(task == null){
+            return;
+        }
         log.info("start runExecutor");
 
         executorWorker.work(TimerUtils.UnionTimerIDUnix(task.getTimerId(),task.getRunTimer()));

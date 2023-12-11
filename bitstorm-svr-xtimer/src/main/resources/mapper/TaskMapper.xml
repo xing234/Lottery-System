@@ -15,7 +15,7 @@
     </resultMap>
 
     <insert id="batchSave" useGeneratedKeys="true">
-        insert into timer_task (`app`,`timer_id`,`output`,`run_timer`,`cost_time`,`status`)
+        insert ignore into timer_task (`app`,`timer_id`,`output`,`run_timer`,`cost_time`,`status`)
         values
             <foreach collection="taskList" item="taskModel" separator=",">
                 (#{taskModel.app},#{taskModel.timerId},#{taskModel.output},#{taskModel.runTimer},#{taskModel.costTime},#{taskModel.status})

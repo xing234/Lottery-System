@@ -35,7 +35,7 @@ public class MigratorWorker {
     @Autowired
     ReentrantDistributeLock reentrantDistributeLock;
 
-    @Scheduled(fixedRate = 60*60*1000) // 60*60*1000 一小时执行一次
+    @Scheduled(fixedRate = 1*60*1000) // 60*60*1000 一小时执行一次
     public void work() {
         System.out.println("开始迁移时间：" + LocalDateTime.now());
         Date startHour = getStartHour(new Date());
