@@ -30,16 +30,16 @@
             <if test="taskModel.app != null">
                 `app` = #{taskModel.app},
             </if>
-            <if test="taskModel.timer_id != null">
+            <if test="taskModel.timerId != null">
                 `timer_id` = #{taskModel.timerId},
             </if>
             <if test="taskModel.output != null">
                 `output` = #{taskModel.output},
             </if>
-            <if test="taskModel.run_timer != null">
+            <if test="taskModel.runTimer != null">
                 `run_timer` = #{taskModel.runTimer},
             </if>
-            <if test="taskModel.cost_time != null">
+            <if test="taskModel.costTime != null">
                 `cost_time` = #{taskModel.costTime},
             </if>
             <if test="taskModel.status != null">
@@ -53,7 +53,7 @@
         select * from timer_task
         <where>
             <if test="startTime != null">
-                AND `run_timer` > #{startTime}
+                AND `run_timer` <![CDATA[>=]]> #{startTime}
             </if>
             <if test="endTime != null">
                 AND `run_timer` <![CDATA[<=]]> #{endTime}
@@ -65,6 +65,6 @@
     </select>
 
     <select id="getTasksByTimerIdUnix" resultType="cn.bitoffer.xtimer.model.TaskModel" resultMap="taskMap">
-        select * from timer_task where timer_id = #{timerId} and run_timer = #{runTime}
+        select * from timer_task where timer_id = #{timerId} and run_timer = #{runTimer}
     </select>
 </mapper>

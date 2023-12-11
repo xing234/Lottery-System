@@ -4,10 +4,12 @@ import cn.bitoffer.api.dto.xtimer.NotifyHTTPParam;
 import cn.bitoffer.api.dto.xtimer.TimerDTO;
 import cn.bitoffer.api.feign.XTimerClient;
 import cn.bitoffer.lottery.common.ResponseEntity;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/xtimer")
@@ -52,6 +54,7 @@ public class XtimerTestController {
 
     @PostMapping(value = "/callback")
     public void createTask(@RequestBody String callBack){
-        System.out.println("收到Callback:"+callBack);
+        Date now = new Date();
+        System.out.println("收到Callback:"+now+":"+callBack);
     }
 }
