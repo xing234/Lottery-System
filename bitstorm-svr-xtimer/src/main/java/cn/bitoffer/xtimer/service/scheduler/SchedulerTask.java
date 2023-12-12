@@ -30,12 +30,13 @@ public class SchedulerTask {
 
         String lockToken = TimerUtils.GetTokenStr();
         // 只加锁不解锁，只有超时解锁；超时时间控制频率；
+        // 锁住横纵向切分后的：单个桶（分钟+bucketIndex）
         boolean ok = reentrantDistributeLock.lock(
                 TimerUtils.GetTimeBucketLockKey(date,bucketId),
                 lockToken,
                 schedulerAppConf.getTryLockSeconds());
         if(!ok){
-            log.error("asyncHandleSlice 获取分布式锁失败");
+            log.info("asyncHandleSlice 获取分布式锁失败");
             return;
         }
 

@@ -21,12 +21,12 @@ public class SchedulerWorker {
 
     @Scheduled(fixedRate = 1000)
     public void scheduledTask() {
-        System.out.println("任务执行时间：" + LocalDateTime.now());
+        log.info("任务执行时间：" + LocalDateTime.now());
         handleSlices();
     }
     
     private void handleSlices(){
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < schedulerAppConf.getBucketsNum(); i++) {
             handleSlice(i);
         }
     }

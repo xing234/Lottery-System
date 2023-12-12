@@ -84,7 +84,7 @@ public class TaskCache {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR,"splitTimerIDUnix 错误, timerIDUnix:"+timerIDUnix);
             }
             task.setTimerId(longSet.get(0));
-            task.setTimerId(longSet.get(1));
+            task.setRunTimer(longSet.get(1));
             tasks.add(task);
         }
 

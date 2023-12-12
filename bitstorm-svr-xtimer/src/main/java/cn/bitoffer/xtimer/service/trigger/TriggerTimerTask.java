@@ -52,7 +52,7 @@ public class TriggerTimerTask extends TimerTask {
     @Override
     public void run() {
         Date tStart = new Date(startTime.getTime() + count*triggerAppConf.getZrangeGapSeconds()*1000L);
-        if(tStart.compareTo(endTime) >= 0){
+        if(tStart.compareTo(endTime) > 0){
             latch.countDown();
             return;
         }
@@ -81,15 +81,6 @@ public class TriggerTimerTask extends TimerTask {
                 log.error("executor run task error,task"+task.toString());
             }
         }
-    }
-
-    private int getBucket(String minuteBucketKey){
-        String[] timeBucket = minuteBucketKey.split("_");
-        if(timeBucket.length != 2){
-            log.error("TriggerTimerTask getStartMinute 错误");
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"TriggerTimerTask getStartMinute 错误");
-        }
-        return Integer.parseInt(timeBucket[1]);
     }
 
     private List<TaskModel> getTasksByTime(Date start, Date end){

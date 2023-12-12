@@ -35,17 +35,18 @@ public class MigratorWorker {
     @Autowired
     ReentrantDistributeLock reentrantDistributeLock;
 
-    @Scheduled(fixedRate = 1*60*1000) // 60*60*1000 一小时执行一次
+    @Scheduled(fixedRate = 10*1000) // 60*60*1000 一小时执行一次
     public void work() {
-        System.out.println("开始迁移时间：" + LocalDateTime.now());
+        log.info("开始迁移时间：" + LocalDateTime.now());
         Date startHour = getStartHour(new Date());
         String lockToken = TimerUtils.GetTokenStr();
         boolean ok = reentrantDistributeLock.lock(
                 TimerUtils.GetMigratorLockKey(startHour),
                 lockToken,
-                60L*1000*migratorAppConf.getMigrateTryLockMinutes());
+                60L*migratorAppConf.getMigrateTryLockMinutes());
         if(!ok){
-            log.error("migrator get lock failed！"+TimerUtils.GetMigratorLockKey(startHour));
+            log.warn("migrator get lock failed！"+TimerUtils.GetMigratorLockKey(startHour));
+            return;
         }
 
         //迁移
@@ -55,7 +56,7 @@ public class MigratorWorker {
         reentrantDistributeLock.expireLock(
                 TimerUtils.GetMigratorLockKey(startHour),
                 lockToken,
-                60L*1000*migratorAppConf.getMigrateSuccessExpireMinutes());
+                60L*migratorAppConf.getMigrateSuccessExpireMinutes());
     }
 
     private Date getStartHour(Date date){
@@ -77,14 +78,7 @@ public class MigratorWorker {
 
         for (TimerModel timerModel:timers) {
             migratorManager.migrateTimer(timerModel);
-            //慢慢迁，先睡5秒
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                log.error("migrateTimer error:",e);
-            }
         }
-
     }
 }
 
