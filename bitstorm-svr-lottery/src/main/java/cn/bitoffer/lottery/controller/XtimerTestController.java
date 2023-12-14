@@ -43,7 +43,7 @@ public class XtimerTestController {
         timerDTO.setTimerId(1L);
         timerDTO.setApp("testConsumer");
 
-        xTimerClient.enableTimer(timerDTO);
+        xTimerClient.enableTimer("testConsumer",1L);
         log.info("enableTimer success");
         return ResponseEntity.ok(
                 "enable success:"

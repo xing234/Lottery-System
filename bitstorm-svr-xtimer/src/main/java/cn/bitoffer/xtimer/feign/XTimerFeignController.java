@@ -5,6 +5,7 @@ import cn.bitoffer.api.feign.XTimerClient;
 import cn.bitoffer.xtimer.service.XTimerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,7 +21,7 @@ public class XTimerFeignController implements XTimerClient {
     }
 
     @Override
-    public void enableTimer(TimerDTO timerDTO) {
-        xTimerService.EnableTimer(timerDTO.getApp(), timerDTO.getTimerId());
+    public void enableTimer(String app, Long timerId, MultiValueMap<String, String> headers) {
+        xTimerService.EnableTimer(app, timerId);
     }
 }

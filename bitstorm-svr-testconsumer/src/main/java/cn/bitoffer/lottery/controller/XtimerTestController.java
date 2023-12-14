@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/xtimer")
+@RequestMapping("/testConsumer")
 @Slf4j
 public class XtimerTestController {
 
@@ -45,7 +45,7 @@ public class XtimerTestController {
         timerDTO.setTimerId(1L);
         timerDTO.setApp("testConsumer");
 
-        xTimerClient.enableTimer(timerDTO);
+        xTimerClient.enableTimer("testConsumer",1L,null);
         log.info("enableTimer success");
         return ResponseEntity.ok(
                 "enable success:"
