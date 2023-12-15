@@ -1,4 +1,4 @@
-package cn.bitoffer.lottery.redis;
+package cn.bitoffer.testconsumer.redis;
 
 import cn.bitoffer.common.redis.RedisBase;
 import lombok.extern.slf4j.Slf4j;

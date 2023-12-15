@@ -1,4 +1,4 @@
-package cn.bitoffer.lottery;
+package cn.bitoffer.testconsumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

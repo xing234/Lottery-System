@@ -1,4 +1,4 @@
-package cn.bitoffer.lottery.common;
+package cn.bitoffer.testconsumer.common;
 
 public enum ResponseEnum {
     OK(0, "ok"),
