@@ -24,6 +24,14 @@ public class DemoController {
     @Autowired
     private RedisExample redisExample;
 
+    @GetMapping("/hello")
+    public ResponseEntity<String> helloworld() {
+        // 消息队列发送消息
+        return ResponseEntity.ok(
+                "hello world"
+        );
+    }
+
     @GetMapping("/kafkaDemo")
     public ResponseEntity<String> kafkaTest() {
         // 消息队列发送消息

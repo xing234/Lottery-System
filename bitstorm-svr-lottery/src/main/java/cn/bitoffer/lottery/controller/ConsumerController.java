@@ -1,6 +1,6 @@
 package cn.bitoffer.lottery.controller;
 
-import cn.bitoffer.api.feign.TestProviderClient;
+import cn.bitoffer.api.feign.DemoClient;
 import cn.bitoffer.lottery.common.ResponseEntity;
 import cn.bitoffer.lottery.redis.RedisExample;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 public class ConsumerController {
 
     @Resource
-    private TestProviderClient providerClient;
+    private DemoClient providerClient;
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;

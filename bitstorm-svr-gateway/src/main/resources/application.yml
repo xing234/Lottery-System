@@ -23,7 +23,7 @@ spring:
           predicates:
             - Path=/xtimer/**
           filters:
-            - AuthenticationFilter
+            - RewritePath=/xtimer/(?<segment>.*), /$\{segment}
         - id: bitstorm-svr-testconsumer
           uri: lb://bitstorm-svr-testconsumer
           predicates:

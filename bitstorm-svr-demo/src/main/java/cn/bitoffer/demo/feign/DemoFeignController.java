@@ -1,6 +1,6 @@
 package cn.bitoffer.demo.feign;
 
-import cn.bitoffer.api.feign.TestProviderClient;
+import cn.bitoffer.api.feign.DemoClient;
 import cn.bitoffer.demo.model.Example;
 import cn.bitoffer.demo.service.ExampleService;
 import lombok.extern.slf4j.Slf4j;
@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 微服接口模版
- * TestProviderClient 为对外提供的微服务接口
+ * DemoClient 为对外提供的微服务接口
  * ProviderFeignController 为该接口的实现
  **/
 @RestController
 @Slf4j
-public class ProviderFeignController implements TestProviderClient {
+public class DemoFeignController implements DemoClient {
 
     @Autowired
     private ExampleService exampleService;
@@ -40,6 +40,6 @@ public class ProviderFeignController implements TestProviderClient {
 
         System.out.println(example1);
 
-        return "服务提供者1：" + name;
+        return "我是服务提供者demo，hello： " + name;
     }
 }

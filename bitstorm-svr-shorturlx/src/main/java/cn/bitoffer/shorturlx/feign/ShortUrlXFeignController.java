@@ -1,6 +1,6 @@
 package cn.bitoffer.shorturlx.feign;
 
-import cn.bitoffer.api.feign.TestProviderClient;
+import cn.bitoffer.api.feign.DemoClient;
 import cn.bitoffer.shorturlx.service.ShortUrlXService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
-public class ShortUrlXFeignController implements TestProviderClient {
+public class ShortUrlXFeignController implements DemoClient {
 
     @Autowired
     private ShortUrlXService shortUrlXService;

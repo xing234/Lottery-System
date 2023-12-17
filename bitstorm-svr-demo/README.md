@@ -11,7 +11,7 @@
 
 ## 模板使用
 
-1. 复制`bitstorm-svr-testprovider`修改项目名为新项目名称(建议本地文件夹复制，不要在idel中复制)
+1. 复制`bitstorm-svr-demo`修改项目名为新项目名称(建议本地文件夹复制，不要在idel中复制)
 2. 修改新项目`pom.xml`文件`artifactId`节点为新项目名称 
 3. 修改根项目`pom.xml`文件`modules`节点，加入新项目
 4. 修改`package`包名，包括 import 的包名 

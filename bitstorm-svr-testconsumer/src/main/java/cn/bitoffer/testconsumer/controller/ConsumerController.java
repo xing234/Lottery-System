@@ -1,6 +1,6 @@
 package cn.bitoffer.testconsumer.controller;
 
-import cn.bitoffer.api.feign.TestProviderClient;
+import cn.bitoffer.api.feign.DemoClient;
 import cn.bitoffer.common.model.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +15,11 @@ import javax.annotation.Resource;
 public class ConsumerController {
 
     @Resource
-    private TestProviderClient providerClient;
+    private DemoClient demoClient;
 
     @GetMapping("/example")
     public ResponseEntity<String> consumer() {
-        String resultStr = providerClient.call("hello");
+        String resultStr = demoClient.call("testconsumer");
         log.info("Result:" + resultStr);
         return ResponseEntity.ok(
                 "result:"+resultStr
