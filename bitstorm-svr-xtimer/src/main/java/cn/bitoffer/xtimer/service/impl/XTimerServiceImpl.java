@@ -35,15 +35,15 @@ public class XTimerServiceImpl implements XTimerService {
 
     @Override
     public Long CreateTimer(TimerDTO timerDTO) {
-        String lockToken = TimerUtils.GetTokenStr();
-        // 只加锁不解锁，只有超时解锁；超时时间控制频率；
-        boolean ok = reentrantDistributeLock.lock(
-                TimerUtils.GetCreateLockKey(timerDTO.getApp()),
-                lockToken,
-                defaultGapSeconds);
-        if(!ok){
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"创建/删除操作过于频繁，请稍后再试！");
-        }
+//        String lockToken = TimerUtils.GetTokenStr();
+////        // 只加锁不解锁，只有超时解锁；超时时间控制频率；
+////        boolean ok = reentrantDistributeLock.lock(
+////                TimerUtils.GetCreateLockKey(timerDTO.getApp()),
+////                lockToken,
+////                defaultGapSeconds);
+////        if(!ok){
+////            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"创建/删除操作过于频繁，请稍后再试！");
+////        }
 
         boolean isValidCron = CronExpression.isValidExpression(timerDTO.getCron());
         if(!isValidCron){
