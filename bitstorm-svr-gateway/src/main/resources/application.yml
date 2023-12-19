@@ -25,9 +25,9 @@ spring:
           filters:
             - RewritePath=/xtimer/(?<segment>.*), /$\{segment}
         - id: bitstorm-svr-testconsumer
-          uri: lb://bitstorm-svr-testconsumer
+          uri: lb://bitstorm-svr-demo
           predicates:
-            - Path=/testConsumer/**
+            - Path=/demo/**
           filters:
             - AuthenticationFilter
 

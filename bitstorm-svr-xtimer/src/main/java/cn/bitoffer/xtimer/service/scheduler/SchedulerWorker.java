@@ -31,6 +31,13 @@ public class SchedulerWorker {
         }
     }
 
+    /*
+    * Q：为什么要重复执行一下前一分钟的批次？
+    * A：主要是为了一个兜底重试机制，如果某一个分片执行失败了，那这种方式可以在下一分钟进行一次重试。
+    * A：如果分片执行成功了，会延长分布式锁的时间，这样"重复执行前一分钟"批次这个逻辑也因为获取不到分布式
+    * 锁而避免重复执行。如果分片本身执行失败了，则不会延长分布式锁时间，"重复执行前一分钟"则可以获取到分布式锁
+    * 重试执行。
+    * */
     private void handleSlice(int bucketId){
         Date now = new Date();
         Date nowPreMin = new Date(now.getTime() - 60000);

@@ -45,9 +45,11 @@ public class SchedulerTask {
         // 调用trigger进行处理
         triggerWorker.work(TimerUtils.GetSliceMsgKey(date,bucketId));
 
-
-        // todo 成功之后更新分布式锁的过期时间 ack
-
+        // 延长分布式锁的时间,避免重复执行分片
+        reentrantDistributeLock.expireLock(
+                TimerUtils.GetTimeBucketLockKey(date,bucketId),
+                lockToken,
+                schedulerAppConf.getSuccessExpireSeconds());
 
         log.info("end executeAsync");
     }
