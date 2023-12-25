@@ -80,4 +80,16 @@ public class ResponseEntity<T> implements Serializable {
         responseEntity.setData(data);
         return responseEntity;
     }
+
+    /**
+     * 前端显示失败消息
+     * @param msg 失败消息
+     * @return
+     */
+    public static <T> ResponseEntity<T> showFailMsg(String msg) {
+        ResponseEntity<T> serverResponseEntity = new ResponseEntity<>();
+        serverResponseEntity.setMessage(msg);
+        serverResponseEntity.setCode(ResponseEnum.SHOW_FAIL.code());
+        return serverResponseEntity;
+    }
 }

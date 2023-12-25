@@ -25,9 +25,8 @@ public class ReentrantDistributeLock {
 
         // 不属于自己，尝试获取锁
         boolean ok = redisBase.setnx(key,token,expireSeconds);
-        log.error("lock is acquired by others");
         if(!ok){
-            log.error("lock is acquired by others");
+            log.info("lock is acquired by others");
         }
         return ok;
     }
@@ -55,7 +54,7 @@ public class ReentrantDistributeLock {
     }
 
     public void expireLock(String key, String token, long expireSeconds){
-        Long execute = redisBase.executeLua(getUnlockScript(), Arrays.asList(key), token, expireSeconds);
+        Long execute = redisBase.executeLua(getExpireLockScript(), Arrays.asList(key), token, expireSeconds);
         if (execute.longValue() == 0) {
             log.info("延期{}失败:{}", key, execute);
         } else if (execute.longValue() == 1) {

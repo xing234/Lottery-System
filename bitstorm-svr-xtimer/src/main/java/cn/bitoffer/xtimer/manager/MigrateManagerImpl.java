@@ -45,8 +45,8 @@ public class MigrateManagerImpl implements MigratorManager{
     @Override
     public void migrateTimer(TimerModel timerModel) {
         // 2. 校验状态
-        if(timerModel.getStatus() == TimerStatus.Enable.getStatus()){
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"Timer非Unable状态，迁移失败，timerId:"+timerModel.getTimerId());
+        if(timerModel.getStatus() != TimerStatus.Enable.getStatus()){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"Timer非Enable状态，迁移失败，timerId:"+timerModel.getTimerId());
         }
 
         // 3.取得批量的执行时机
@@ -75,10 +75,6 @@ public class MigrateManagerImpl implements MigratorManager{
             log.error("Zset存储taskList失败");
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"ZSet存储taskList失败，timerId:"+timerModel.getTimerId());
         }
-
-        // 修改 timer 状态为激活态
-        timerModel.setStatus(TimerStatus.Enable.getStatus());
-        timerMapper.update(timerModel);
     }
 
     private List<TaskModel> batchTasksFromTimer(TimerModel timerModel, List<Long> executeTimes){

@@ -13,10 +13,16 @@
     <modules>
         <module>bitstorm-svr-api</module>
         <module>bitstorm-svr-common</module>
-        <module>bitstorm-svr-testprovider</module>
+        <module>bitstorm-svr-demo</module>
         <module>bitstorm-svr-seckill</module>
         <module>bitstorm-svr-testconsumer</module>
         <module>bitstorm-svr-xtimer</module>
+        <module>bitstorm-svr-asyncflow</module>
+        <module>bitstorm-svr-shorturlx</module>
+        <module>bitstorm-svr-lottery</module>
+        <module>bitstorm-svr-gateway</module>
+        <module>bitstorm-svr-user</module>
+        <module>bitstorm-svr-auth</module>
     </modules>
 
 
@@ -42,6 +48,10 @@
         <java.jwt.version>0.9.1</java.jwt.version>
         <google.guava.version>31.1-jre</google.guava.version>
         <redis.version>2.1.0.1.8</redis.version>
+        <security.version>2.2.5.RELEASE</security.version>
+        <oauth2.version>2.2.5.RELEASE</oauth2.version>
+        <jjwt.version>0.11.5</jjwt.version>
+        <druid.version>1.2.15</druid.version>
     </properties>
 
     <dependencyManagement>
@@ -118,6 +128,36 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-security</artifactId>
+                <version>${security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-oauth2</artifactId>
+                <version>${oauth2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

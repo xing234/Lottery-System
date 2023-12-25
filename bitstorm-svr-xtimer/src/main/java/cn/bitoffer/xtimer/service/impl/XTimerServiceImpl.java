@@ -35,15 +35,15 @@ public class XTimerServiceImpl implements XTimerService {
 
     @Override
     public Long CreateTimer(TimerDTO timerDTO) {
-        String lockToken = TimerUtils.GetTokenStr();
-        // 只加锁不解锁，只有超时解锁；超时时间控制频率；
-        boolean ok = reentrantDistributeLock.lock(
-                TimerUtils.GetCreateLockKey(timerDTO.getApp()),
-                lockToken,
-                defaultGapSeconds);
-        if(!ok){
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"创建/删除操作过于频繁，请稍后再试！");
-        }
+//        String lockToken = TimerUtils.GetTokenStr();
+////        // 只加锁不解锁，只有超时解锁；超时时间控制频率；
+////        boolean ok = reentrantDistributeLock.lock(
+////                TimerUtils.GetCreateLockKey(timerDTO.getApp()),
+////                lockToken,
+////                defaultGapSeconds);
+////        if(!ok){
+////            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"创建/删除操作过于频繁，请稍后再试！");
+////        }
 
         boolean isValidCron = CronExpression.isValidExpression(timerDTO.getCron());
         if(!isValidCron){
@@ -110,7 +110,16 @@ public class XTimerServiceImpl implements XTimerService {
         if(timerModel == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"激活失败，timer不存在：timerId"+id);
         }
+        // 2. 校验状态
+        if(timerModel.getStatus() == TimerStatus.Enable.getStatus()){
+            log.warn("Timer非Unable状态，激活失败，timerId:"+timerModel.getTimerId());
+        }
+        // 修改 timer 状态为激活态
+        timerModel.setStatus(TimerStatus.Enable.getStatus());
+        timerMapper.update(timerModel);
+        //迁移数据
         migratorManager.migrateTimer(timerModel);
+
     }
 
 

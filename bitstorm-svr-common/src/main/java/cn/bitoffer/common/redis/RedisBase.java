@@ -171,11 +171,10 @@ public final class RedisBase {
     public boolean setnx(String key, Object value, long time) {
         try {
             if (time > 0) {
-                redisTemplate.opsForValue().setIfAbsent(key, value, time, TimeUnit.SECONDS);
+                return redisTemplate.opsForValue().setIfAbsent(key, value, time, TimeUnit.SECONDS);
             } else {
-                set(key, value);
+                return set(key, value);
             }
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
