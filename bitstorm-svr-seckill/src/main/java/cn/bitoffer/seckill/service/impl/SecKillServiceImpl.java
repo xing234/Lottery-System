@@ -2,16 +2,14 @@ package cn.bitoffer.seckill.service.impl;
 
 import cn.bitoffer.seckill.mapper.*;
 import cn.bitoffer.seckill.model.*;
-import cn.bitoffer.seckill.redis.RedisUtil;
 import cn.bitoffer.seckill.service.SecKillService;
 import com.alibaba.nacos.shaded.com.google.gson.Gson;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import cn.bitoffer.common.redis.RedisBase;
 
-import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -25,6 +23,8 @@ public class SecKillServiceImpl implements SecKillService {
 
     @Autowired
     private QuotaMapper quotaMapper;
+
+    @Autowired
     private UserQuotaMapper userQuotaMapper;
 
     @Autowired
@@ -37,7 +37,7 @@ public class SecKillServiceImpl implements SecKillService {
     private OrderMapper orderMapper;
 
     @Autowired
-    private RedisUtil redisUtil;
+    private RedisBase redisBase;
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
@@ -78,7 +78,7 @@ public class SecKillServiceImpl implements SecKillService {
 
     @Override
     public String secKillV3(String traceID, Long userID, String goodsNum, Integer num) {
-        kafkaTemplate.send("tp-seckill","aaaaaa");
+        //kafkaTemplate.send("tp-seckill","aaaaaa");
         Goods goods = goodsMapper.getGoodsByNum(goodsNum);
         String secNum = UUID.randomUUID().toString();
         try {
@@ -95,7 +95,7 @@ public class SecKillServiceImpl implements SecKillService {
         skMsg.num = num;
         Gson gson = new Gson();
         String msg = gson.toJson(skMsg);
-        kafkaTemplate.send("tp-seckill","aaaaaa");
+        kafkaTemplate.send("tp-seckill",msg);
         return secNum;
     }
 
@@ -111,9 +111,8 @@ public class SecKillServiceImpl implements SecKillService {
         psRecord.setModifyTime(date);
         Gson gson = new Gson();
         String recordStr = gson.toJson(psRecord);
-        recordStr = "";
         System.out.println();
-        List<Object> result = redisUtil.executeLua(secKillLua, Arrays.asList(""+userID, ""+goods.getID(), ""+num, secNum, recordStr));
+        List<String> result = redisBase.executeLuaReturnString(secKillLua, Arrays.asList(""+userID, ""+goods.getID(), ""+num, secNum, recordStr));
         Long y = Long.valueOf(String.valueOf(result.get(0))).longValue();
         Integer x = y.intValue();
         System.out.println("x is : " + x);
@@ -132,12 +131,21 @@ public class SecKillServiceImpl implements SecKillService {
         }
     }
     public Boolean judgeQuota(long userID, long goodsID, Integer num) {
+        Integer userKilledNum = 0;
+        Integer userQuotaNum = 0;
         UserQuota userQuota = userQuotaMapper.getUserGoodsUserQuota(userID, goodsID);
-        Integer userKilledNum = userQuota.getKilledNum();
-        Integer userQuotaNum = userQuota.getNum();
+        if (userQuota != null) {
+            userKilledNum = userQuota.getKilledNum();
+            userQuotaNum = userQuota.getNum();
+        }
         if (userQuotaNum == 0) {
            Quota globalQuota = quotaMapper.getGoodsQuota(goodsID);
-           userQuotaNum =  globalQuota.getNum();
+           if (globalQuota  != null) {
+               userQuotaNum =  globalQuota.getNum();
+           }
+        }
+        if (userQuotaNum == 0) {
+            return true;
         }
         Integer leftQuota = userQuotaNum - userKilledNum;
         if (leftQuota >= num) {
@@ -145,13 +153,25 @@ public class SecKillServiceImpl implements SecKillService {
         }
         return false;
     }
-    public String secKillDB(String traceID, Long userID, Goods goods, String secNum, Integer num) {
-        judgeQuota(userID, goods.getID(), num);
-        return "";
+    public String secKillInStore(String traceID, Long userID, Goods goods, String secNum, Integer num) {
+        boolean quotaFlag = judgeQuota(userID, goods.getID(), num);
+        if (!quotaFlag) {
+            throw new RuntimeException("限额不够");
+        }
+        return secKillDB(traceID, userID, goods, secNum, num);
     }
     @Transactional
-    public String secKillInStore(String traceID, Long userID, Goods goods, String secNum, Integer num) {
+    public String secKillDB(String traceID, Long userID, Goods goods, String secNum, Integer num) {
         try {
+            Integer affectedRows = userQuotaMapper.incrKilledNum(userID, goods.getID(), num);
+            if (affectedRows == 0) {
+                UserQuota userQuota = new UserQuota();
+                userQuota.setGoodsID(goods.getID());
+                userQuota.setKilledNum(num);
+                userQuota.setNum(0);
+                userQuota.setUserID(userID);
+                userQuotaMapper.save(userQuota);
+            }
             if (secNum == "") {
                 secNum = UUID.randomUUID().toString();
             }
