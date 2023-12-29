@@ -54,17 +54,17 @@
         select * from t_prize;
     </select>
 
-    <insert id="save" useGeneratedKeys="true" keyProperty="prize.id">
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
         insert into t_prize (`title`,`prize_num`,`left_num`,`prize_code`,`prize_time`,`img`,`display_order`,`prize_type`,`begin_time`,`end_time`,`prize_plan`,`sys_status`,`sys_created`,`sys_updated`)
-        values (#{prize.title},#{prize.prizeNum},#{prize.leftNum},#{prize.prizeCode},#{prize.prizeTime},#{prize.img},#{prize.displayOrder}
+        values (#{prize.title},#{prize.prizeNum},#{prize.leftNum},#{prize.prizeCode},#{prize.prizeTime},#{prize.img},#{prize.displayOrder},
                #{prize.prizeType},#{prize.beginTime},#{prize.endTime},#{prize.prizePlan},#{prize.sysStatus},#{prize.sysCreated},#{prize.sysUpdated});
     </insert>
 
-    <insert id="saveInBatches" useGeneratedKeys="true" keyProperty="prize.id">
+    <insert id="saveInBatches" useGeneratedKeys="true" keyProperty="id">
         insert into t_prize (`title`,`prize_num`,`left_num`,`prize_code`,`prize_time`,`img`,`display_order`,`prize_type`,`begin_time`,`end_time`,`prize_plan`,`sys_status`,`sys_created`,`sys_updated`)
         values
         <foreach collection="prizeList" item="prize" separator=",">
-            (#{prize.title},#{prize.prizeNum},#{prize.leftNum},#{prize.prizeCode},#{prize.prizeTime},#{prize.img},#{prize.displayOrder}
+            (#{prize.title},#{prize.prizeNum},#{prize.leftNum},#{prize.prizeCode},#{prize.prizeTime},#{prize.img},#{prize.displayOrder},
             #{prize.prizeType},#{prize.beginTime},#{prize.endTime},#{prize.prizePlan},#{prize.sysStatus},#{prize.sysCreated},#{prize.sysUpdated})
         </foreach>
     </insert>

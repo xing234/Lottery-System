@@ -35,11 +35,43 @@ public class LotteryController {
     public static class AddPrizeListReq {
         int userId;
         List<ViewPrize> viewPrizeList;
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+
+        public List<ViewPrize> getViewPrizeList() {
+            return viewPrizeList;
+        }
+
+        public void setViewPrizeList(List<ViewPrize> viewPrizeList) {
+            this.viewPrizeList = viewPrizeList;
+        }
     }
 
     public static class ImportCacheCouponReq {
         int userId;
         ViewCoupon viewCoupon;
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+
+        public ViewCoupon getViewCoupon() {
+            return viewCoupon;
+        }
+
+        public void setViewCoupon(ViewCoupon viewCoupon) {
+            this.viewCoupon = viewCoupon;
+        }
     }
 
     @PostMapping(value = "/v1/get_lucky", consumes = "application/json; charset=utf-8")

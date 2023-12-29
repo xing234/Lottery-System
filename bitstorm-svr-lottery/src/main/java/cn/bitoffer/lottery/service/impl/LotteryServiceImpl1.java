@@ -334,6 +334,7 @@ public class LotteryServiceImpl1 implements LotteryService {
     }
 
     public void addPrizeList(List<ViewPrize> viewPrizeList){
+        Date now = new Date();
         ArrayList<Prize> prizeList = new ArrayList<>();
         for(ViewPrize viewPrize : viewPrizeList) {
             Prize prize = new Prize();
@@ -349,6 +350,8 @@ public class LotteryServiceImpl1 implements LotteryService {
             prize.setEndTime(viewPrize.getEndTime());
             prize.setPrizePlan(viewPrize.getPrizePlan());
             prize.setSysStatus(viewPrize.getSysStatus());
+            prize.setSysCreated(now);
+            prize.setSysUpdated(now);
             prizeList.add(prize);
         }
         prizeMapper.saveInBatches(prizeList);
