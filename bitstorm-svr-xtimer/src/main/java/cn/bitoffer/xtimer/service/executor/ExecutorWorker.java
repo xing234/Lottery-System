@@ -62,7 +62,9 @@ public class ExecutorWorker {
             return;
         }
 
-        Date execTime = new Date();
+        // 触发时间的误差误差时间
+        int gapTime = (int) (new Date().getTime() - taskModel.getRunTimer());
+        taskModel.setCostTime(gapTime);
 
         // 执行http回调，通知业务放
         ResponseEntity<String> resp = null;
@@ -83,6 +85,7 @@ public class ExecutorWorker {
             taskModel.setStatus(TaskStatus.Failed.getStatus());
             taskModel.setOutput(resp.toString());
         }
+
         taskMapper.update(taskModel);
     }
 

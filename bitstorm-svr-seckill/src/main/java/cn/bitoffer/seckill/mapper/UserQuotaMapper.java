@@ -50,5 +50,5 @@ public interface UserQuotaMapper {
      * @param num
      * @return UserQuota
      */
-    void incrKilledNum(@Param("userID") Long userID, @Param("goodsID") Long goodsID, Integer num);
+    Integer incrKilledNum(@Param("userID") Long userID, @Param("goodsID") Long goodsID, @Param("num") Integer num);
 }
