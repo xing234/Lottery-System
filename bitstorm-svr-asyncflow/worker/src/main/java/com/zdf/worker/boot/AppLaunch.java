@@ -173,8 +173,8 @@ public class AppLaunch implements Launch{
 
     private List<AsyncTaskBase> getAsyncTaskBases(ObserverManager observerManager, Class<?> taskType) {
 // 分布式锁的参数
-        //        LockParam lockParam = new LockParam(LOCK_KEY);
-        // 分布式锁
+//                LockParam lockParam = new LockParam(LOCK_KEY);
+//         分布式锁
 //        RedisLock redisLock = new RedisLock(lockParam);
         List<AsyncTaskReturn> taskList = null;
         try {

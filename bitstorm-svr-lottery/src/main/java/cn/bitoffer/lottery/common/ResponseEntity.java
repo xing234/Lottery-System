@@ -80,4 +80,14 @@ public class ResponseEntity<T> implements Serializable {
         responseEntity.setData(data);
         return responseEntity;
     }
+
+    public static <T> ResponseEntity<T> resp(ResponseEnum re, T data) {
+        ResponseEntity<T> responseEntity = new ResponseEntity<>();
+        responseEntity.setData(data);
+        responseEntity.setCode(re.code());
+        responseEntity.setMessage(re.message());
+        responseEntity.setDatetime(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        return responseEntity;
+    }
+
 }
