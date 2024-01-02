@@ -1,7 +1,7 @@
 package cn.bitoffer.xtimer.service.scheduler;
 
 import cn.bitoffer.xtimer.common.conf.SchedulerAppConf;
-import cn.bitoffer.xtimer.redis.ReentrantDistributeLock;
+import cn.bitoffer.common.redis.ReentrantDistributeLock;
 import cn.bitoffer.xtimer.service.trigger.TriggerWorker;
 import cn.bitoffer.xtimer.utils.TimerUtils;
 import lombok.extern.slf4j.Slf4j;

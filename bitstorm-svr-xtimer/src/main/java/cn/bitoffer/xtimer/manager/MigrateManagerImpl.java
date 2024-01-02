@@ -9,7 +9,7 @@ import cn.bitoffer.xtimer.mapper.TaskMapper;
 import cn.bitoffer.xtimer.mapper.TimerMapper;
 import cn.bitoffer.xtimer.model.TaskModel;
 import cn.bitoffer.xtimer.model.TimerModel;
-import cn.bitoffer.xtimer.redis.ReentrantDistributeLock;
+import cn.bitoffer.common.redis.ReentrantDistributeLock;
 import cn.bitoffer.xtimer.redis.TaskCache;
 import cn.bitoffer.xtimer.utils.TimerUtils;
 import lombok.extern.slf4j.Slf4j;
