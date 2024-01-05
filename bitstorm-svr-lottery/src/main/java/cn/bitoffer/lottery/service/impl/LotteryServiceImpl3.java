@@ -23,7 +23,7 @@ public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryS
         String lockKey = String.format(Constants.lotteryLockKeyPrefix+"%d", userID);
         // 在spring boot 2.0.6版本中整合的redisson,key和锁不能一样
         // redis setnx 操作,此处的lockKey在后面追加1是为了避免redisson锁时报错, 需要和待锁住的数据的key信息不同
-        RLock lock = redisson.getLock(lockKey);
+        RLock lock = redissonClient.getLock(lockKey);
         lock.lock();
         /*
          ******** 抽奖逻辑*******

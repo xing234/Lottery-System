@@ -82,6 +82,8 @@
 <!--            <groupId>org.quartz-scheduler</groupId>-->
 <!--            <artifactId>quartz</artifactId>-->
 <!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter -->
+
 
         <dependency>
             <groupId>com.alibaba</groupId>

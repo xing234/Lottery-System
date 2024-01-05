@@ -11,6 +11,7 @@ import cn.bitoffer.lottery.utils.UtilTools;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -48,8 +50,10 @@ public class LotteryServiceImpl1 implements LotteryService {
 
     @Autowired
     protected StringRedisTemplate redisTemplate;
-    @Resource
-    protected Redisson redisson;
+//    @Resource
+//    protected Redisson redisson;
+    @Autowired
+    RedissonClient redissonClient;
 
 
     @Override
@@ -58,90 +62,101 @@ public class LotteryServiceImpl1 implements LotteryService {
         String lockKey = String.format(Constants.lotteryLockKeyPrefix+"%d", userID);
         // 在spring boot 2.0.6版本中整合的redisson,key和锁不能一样
         // redis setnx 操作,此处的lockKey在后面追加1是为了避免redisson锁时报错, 需要和待锁住的数据的key信息不同
-        RLock lock = redisson.getLock(lockKey);
-        lock.lock();
+        RLock lock = redissonClient.getLock(lockKey);
+        //lock.lock();
         /*
         ******** 抽奖逻辑*******
         */
-        CheckResult checkResult = new CheckResult();
-        // 1. 验证用户今日抽奖次数
-        if (!checkUserDayLotteryTimes(userID)) {
-            log.info("lotteryV1|CheckUserDayLotteryTimes failed，user_id：{}", userID);
-            lotteryResult.setErrcode(ErrorCode.ERR_USER_LIMIT_INVALID);
-            return lotteryResult;
-        }
-        // 2. 验证当天IP参与的抽奖次数
-        if (!checkIpLimit(ip)) {
-            log.info("lotteryV1|checkIpLimit failed，ip：{}", ip);
-            lotteryResult.setErrcode(ErrorCode.ERR_IP_LIMIT_INVALID);
-            return lotteryResult;
-        }
-
-        // 3. 验证IP是否在ip黑名单
-        CheckResult ipCheckResult = checkBlackIp(ip);
-        checkResult.setBlackIp(ipCheckResult.getBlackIp());
-        if (!ipCheckResult.isOk()) {
-            log.info("lotteryV1|checkBlackIp failed，ip：{}", ip);
-            lotteryResult.setErrcode(ErrorCode.ERR_BLACK_IP);
-            return lotteryResult;
-        }
-
-        // 4. 验证用户是否在用户黑名单
-        CheckResult userCheckResult = checkBlackUser(userID);
-        checkResult.setBlackUser(userCheckResult.getBlackUser());
-        if (!userCheckResult.isOk()) {
-            log.info("lotteryV1|checkBlackUser failed，user_id：{}", userID);
-            lotteryResult.setErrcode(ErrorCode.ERR_BLACK_USER);
-            return lotteryResult;
-        }
-        checkResult.setOk(true);
-
-        // 5. 奖品匹配
-        int prizeCode = UtilTools.getRandom(Constants.prizeCodeMax);
-        LotteryPrizeInfo prize = getPrize(prizeCode);
-        if (prize == null)  {
-            log.info("lotteryV1|getPrize null");
-            lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-            return lotteryResult;
-        }
-
-        if (prize.getPrizeNum() <=0) {
-            log.info("lotteryV1|prize_num invalid,prize_id: {}", prize.getId());
-            lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-            return lotteryResult;
-        }
-
-        // 6. 剩余奖品发放
-        if (!giveOutPrize(prize.getId())) {
-            log.info("lotteryV1|prize not enough,prize_id: {}", prize.getId());
-            lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-            return lotteryResult;
-        }
-
-        // 7. 发放优惠券
-        if (prize.getPrizeType() == Constants.prizeTypeCouponDiff) {
-            String code = prizeCodeDiff(prize.getId());
-            if (code.isEmpty()) {
-                log.info("lotteryV1|coupon code is empty: prize_id: {}", prize.getId());
-                lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-                return lotteryResult;
+        if (lock.tryLock()) {
+           getLucky(lotteryResult, userID, userName,ip);
+            try {
+                TimeUnit.SECONDS.sleep(30);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-            // 填充优惠券编码
-            prize.setCouponCode(code);
+            lock.unlock();
         }
-        lotteryResult.setLotteryPrize(prize);
-        // 8.记录中奖记录
-        logLotteryResult(prize,userID,ip,userName,prizeCode);
-        // 9. 大奖黑名单处理
-        if (prize.getPrizeType() == Constants.prizeTypeEntityLarge) {
-            LotteryUserInfo lotteryUserInfo = new LotteryUserInfo();
-            lotteryUserInfo.setUserId(userID);
-            lotteryUserInfo.setUserName(userName);
-            lotteryUserInfo.setIp(ip);
-            prizeLargeBlackLimit(checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
-        }
-        lock.unlock();
         return lotteryResult;
+
+//        CheckResult checkResult = new CheckResult();
+//        // 1. 验证用户今日抽奖次数
+//        if (!checkUserDayLotteryTimes(userID)) {
+//            log.info("lotteryV1|CheckUserDayLotteryTimes failed，user_id：{}", userID);
+//            lotteryResult.setErrcode(ErrorCode.ERR_USER_LIMIT_INVALID);
+//            return lotteryResult;
+//        }
+//        // 2. 验证当天IP参与的抽奖次数
+//        if (!checkIpLimit(ip)) {
+//            log.info("lotteryV1|checkIpLimit failed，ip：{}", ip);
+//            lotteryResult.setErrcode(ErrorCode.ERR_IP_LIMIT_INVALID);
+//            return lotteryResult;
+//        }
+//
+//        // 3. 验证IP是否在ip黑名单
+//        CheckResult ipCheckResult = checkBlackIp(ip);
+//        checkResult.setBlackIp(ipCheckResult.getBlackIp());
+//        if (!ipCheckResult.isOk()) {
+//            log.info("lotteryV1|checkBlackIp failed，ip：{}", ip);
+//            lotteryResult.setErrcode(ErrorCode.ERR_BLACK_IP);
+//            return lotteryResult;
+//        }
+//
+//        // 4. 验证用户是否在用户黑名单
+//        CheckResult userCheckResult = checkBlackUser(userID);
+//        checkResult.setBlackUser(userCheckResult.getBlackUser());
+//        if (!userCheckResult.isOk()) {
+//            log.info("lotteryV1|checkBlackUser failed，user_id：{}", userID);
+//            lotteryResult.setErrcode(ErrorCode.ERR_BLACK_USER);
+//            return lotteryResult;
+//        }
+//        checkResult.setOk(true);
+//
+//        // 5. 奖品匹配
+//        int prizeCode = UtilTools.getRandom(Constants.prizeCodeMax);
+//        LotteryPrizeInfo prize = getPrize(prizeCode);
+//        if (prize == null)  {
+//            log.info("lotteryV1|getPrize null");
+//            lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+//            return lotteryResult;
+//        }
+//
+//        if (prize.getPrizeNum() <=0) {
+//            log.info("lotteryV1|prize_num invalid,prize_id: {}", prize.getId());
+//            lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+//            return lotteryResult;
+//        }
+//
+//        // 6. 剩余奖品发放
+//        if (!giveOutPrize(prize.getId())) {
+//            log.info("lotteryV1|prize not enough,prize_id: {}", prize.getId());
+//            lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+//            return lotteryResult;
+//        }
+//
+//        // 7. 发放优惠券
+//        if (prize.getPrizeType() == Constants.prizeTypeCouponDiff) {
+//            String code = prizeCodeDiff(prize.getId());
+//            if (code.isEmpty()) {
+//                log.info("lotteryV1|coupon code is empty: prize_id: {}", prize.getId());
+//                lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+//                return lotteryResult;
+//            }
+//            // 填充优惠券编码
+//            prize.setCouponCode(code);
+//        }
+//        lotteryResult.setLotteryPrize(prize);
+//        // 8.记录中奖记录
+//        logLotteryResult(prize,userID,ip,userName,prizeCode);
+//        // 9. 大奖黑名单处理
+//        if (prize.getPrizeType() == Constants.prizeTypeEntityLarge) {
+//            LotteryUserInfo lotteryUserInfo = new LotteryUserInfo();
+//            lotteryUserInfo.setUserId(userID);
+//            lotteryUserInfo.setUserName(userName);
+//            lotteryUserInfo.setIp(ip);
+//            prizeLargeBlackLimit(checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
+//        }
+//        lock.unlock();
+//        return lotteryResult;
     }
 
     public boolean checkUserDayLotteryTimes(Long userId){
@@ -275,7 +290,7 @@ public class LotteryServiceImpl1 implements LotteryService {
 
     public String prizeCodeDiff(Long prizeId) {
         String key =  String.format("%d",-prizeId - Constants.couponDiffLockLimit);
-        RLock lock = redisson.getLock(key);
+        RLock lock = redissonClient.getLock(key);
         Long couponID = 0L;
         lock.lock();
         Coupon coupon = couponMapper.getGetNextUsefulCoupon(prizeId,couponID);
@@ -286,6 +301,81 @@ public class LotteryServiceImpl1 implements LotteryService {
         couponMapper.updateByCode(coupon.getCode());
         lock.unlock();
         return coupon.getCode();
+    }
+
+    public void getLucky(LotteryResult lotteryResult,Long userID, String userName, String ip){
+        /*
+         ******** 抽奖逻辑*******
+         */
+        CheckResult checkResult = new CheckResult();
+        // 1. 验证用户今日抽奖次数
+        if (!checkUserDayLotteryTimes(userID)) {
+            log.info("lotteryV1|CheckUserDayLotteryTimes failed，user_id：{}", userID);
+            lotteryResult.setErrcode(ErrorCode.ERR_USER_LIMIT_INVALID);
+        }
+        // 2. 验证当天IP参与的抽奖次数
+        if (!checkIpLimit(ip)) {
+            log.info("lotteryV1|checkIpLimit failed，ip：{}", ip);
+            lotteryResult.setErrcode(ErrorCode.ERR_IP_LIMIT_INVALID);
+        }
+
+        // 3. 验证IP是否在ip黑名单
+        CheckResult ipCheckResult = checkBlackIp(ip);
+        checkResult.setBlackIp(ipCheckResult.getBlackIp());
+        if (!ipCheckResult.isOk()) {
+            log.info("lotteryV1|checkBlackIp failed，ip：{}", ip);
+            lotteryResult.setErrcode(ErrorCode.ERR_BLACK_IP);
+        }
+
+        // 4. 验证用户是否在用户黑名单
+        CheckResult userCheckResult = checkBlackUser(userID);
+        checkResult.setBlackUser(userCheckResult.getBlackUser());
+        if (!userCheckResult.isOk()) {
+            log.info("lotteryV1|checkBlackUser failed，user_id：{}", userID);
+            lotteryResult.setErrcode(ErrorCode.ERR_BLACK_USER);
+        }
+        checkResult.setOk(true);
+
+        // 5. 奖品匹配
+        int prizeCode = UtilTools.getRandom(Constants.prizeCodeMax);
+        LotteryPrizeInfo prize = getPrize(prizeCode);
+        if (prize == null)  {
+            log.info("lotteryV1|getPrize null");
+            lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+        }
+
+        if (prize.getPrizeNum() <=0) {
+            log.info("lotteryV1|prize_num invalid,prize_id: {}", prize.getId());
+            lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+        }
+
+        // 6. 剩余奖品发放
+        if (!giveOutPrize(prize.getId())) {
+            log.info("lotteryV1|prize not enough,prize_id: {}", prize.getId());
+            lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+        }
+
+        // 7. 发放优惠券
+        if (prize.getPrizeType() == Constants.prizeTypeCouponDiff) {
+            String code = prizeCodeDiff(prize.getId());
+            if (code.isEmpty()) {
+                log.info("lotteryV1|coupon code is empty: prize_id: {}", prize.getId());
+                lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+            }
+            // 填充优惠券编码
+            prize.setCouponCode(code);
+        }
+        lotteryResult.setLotteryPrize(prize);
+        // 8.记录中奖记录
+        logLotteryResult(prize,userID,ip,userName,prizeCode);
+        // 9. 大奖黑名单处理
+        if (prize.getPrizeType() == Constants.prizeTypeEntityLarge) {
+            LotteryUserInfo lotteryUserInfo = new LotteryUserInfo();
+            lotteryUserInfo.setUserId(userID);
+            lotteryUserInfo.setUserName(userName);
+            lotteryUserInfo.setIp(ip);
+            prizeLargeBlackLimit(checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
+        }
     }
 
     public void logLotteryResult(LotteryPrizeInfo prize,Long userId,String ip,String userName,int prizeCode) {

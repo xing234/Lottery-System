@@ -5,13 +5,26 @@ spring:
   application:
     name: @artifactId@
   redis:
-    host: 192.168.5.52
-    port: 6379
-    password: 123456
+    # 数据库
     database: 8
-    jedis:
-      pool:
-        max-active: 8 #最大连接数
+    # 主机
+    host: 192.168.5.52
+    # 端口
+    port: 6379
+    # 密码
+    password: "123456"
+    # 读超时
+    timeout: 5s
+    # 连接超时
+    connect-timeout: 5s
+#  redis:
+#    host: 192.168.5.52
+#    port: 6379
+#    password: 123456
+#    database: 8
+#    jedis:
+#      pool:
+#        max-active: 8 #最大连接数
   jackson:
     # 使用jackson进行json序列化时，可以将下划线的传参设置给驼峰的非简单对象成员上；并返回下划线格式的json串
     # 特别注意。使用这种方式的时候，要求不能有自定义的WebMvcConfigurationSupport，因为会覆盖默认的处理方式
@@ -20,7 +33,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.5.51:3306/lottery_system?serverTimezone=GMT%2B8&characterEncoding=utf8&useSSL=false
+    url: jdbc:mysql://192.168.5.51:3306/lottery_system?serverTimezone=GMT%2B8&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
 #  kafka:

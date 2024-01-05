@@ -6,8 +6,6 @@ public class ViewCoupon {
     private int id;
     private int prizeId;
     private String code;
-    private Date sysCreated;
-    private Date sysUpdated;
     private int sysStatus;
 
     public int getId() {
@@ -32,22 +30,6 @@ public class ViewCoupon {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public Date getSysCreated() {
-        return sysCreated;
-    }
-
-    public void setSysCreated(Date sysCreated) {
-        this.sysCreated = sysCreated;
-    }
-
-    public Date getSysUpdated() {
-        return sysUpdated;
-    }
-
-    public void setSysUpdated(Date sysUpdated) {
-        this.sysUpdated = sysUpdated;
     }
 
     public int getSysStatus() {
