@@ -26,10 +26,24 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
     public LotteryResult lottery(Long userID, String userName, String ip) throws ParseException {
         LotteryResult lotteryResult = new LotteryResult();
         String lockKey = String.format(Constants.lotteryLockKeyPrefix+"%d", userID);
-        // 在spring boot 2.0.6版本中整合的redisson,key和锁不能一样
-        // redis setnx 操作,此处的lockKey在后面追加1是为了避免redisson锁时报错, 需要和待锁住的数据的key信息不同
         RLock lock = super.redissonClient.getLock(lockKey);
-        lock.lock();
+        /*
+         ******** 抽奖逻辑*******
+         */
+        if (lock.tryLock()) {
+            log.info("get lock success!!!!!!!!");
+            try {
+                getLuckyV2(lotteryResult, userID, userName,ip);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                lock.unlock();
+            }
+        }
+        return lotteryResult;
+    }
+
+    public void getLuckyV2(LotteryResult lotteryResult,Long userID, String userName, String ip) throws ParseException {
         /*
          ******** 抽奖逻辑*******
          */
@@ -38,13 +52,11 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         if (!checkUserDayLotteryTimesWithCache(userID)) {
             log.info("lotteryV1|CheckUserDayLotteryTimes failed，user_id：{}", userID);
             lotteryResult.setErrcode(ErrorCode.ERR_USER_LIMIT_INVALID);
-            return lotteryResult;
         }
         // 2. 验证当天IP参与的抽奖次数
         if (!checkIpLimit(ip)) {
             log.info("lotteryV1|checkIpLimit failed，ip：{}", ip);
             lotteryResult.setErrcode(ErrorCode.ERR_IP_LIMIT_INVALID);
-            return lotteryResult;
         }
 
         Date now = new Date();
@@ -54,7 +66,6 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         if (!ipCheckResult.isOk()) {
             log.info("lotteryV1|checkBlackIp failed，ip：{}", ip);
             lotteryResult.setErrcode(ErrorCode.ERR_BLACK_IP);
-            return lotteryResult;
         }
 
         // 4. 验证用户是否在用户黑名单
@@ -63,39 +74,35 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         if (!userCheckResult.isOk()) {
             log.info("lotteryV1|checkBlackUser failed，user_id：{}", userID);
             lotteryResult.setErrcode(ErrorCode.ERR_BLACK_USER);
-            return lotteryResult;
         }
         checkResult.setOk(true);
 
         // 5. 奖品匹配
         int prizeCode = UtilTools.getRandom(Constants.prizeCodeMax);
+        log.info("lotteryV1|prizeCode===={}", prizeCode);
         LotteryPrizeInfo prize = getPrizeWithCache(now,prizeCode);
         if (prize == null)  {
             log.info("lotteryV1|getPrize null");
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-            return lotteryResult;
         }
 
         if (prize.getPrizeNum() <=0) {
             log.info("lotteryV1|prize_num invalid,prize_id: {}", prize.getId());
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-            return lotteryResult;
         }
 
         // 6. 剩余奖品发放
         if (!giveOutPrizeWithCache(prize.getId())) {
             log.info("lotteryV1|prize not enough,prize_id: {}", prize.getId());
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-            return lotteryResult;
         }
 
         // 7. 发放优惠券
         if (prize.getPrizeType() == Constants.prizeTypeCouponDiff) {
-            String code = prizeCodeDiff(prize.getId());
+            String code = prizeCodeDiffWithCache(prize.getId());
             if (code.isEmpty()) {
                 log.info("lotteryV1|coupon code is empty: prize_id: {}", prize.getId());
                 lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-                return lotteryResult;
             }
             // 填充优惠券编码
             prize.setCouponCode(code);
@@ -111,10 +118,7 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
             lotteryUserInfo.setIp(ip);
             prizeLargeBlackLimit(now,checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
         }
-        lock.unlock();
-        return lotteryResult;
     }
-
 
     public boolean checkUserDayLotteryTimesWithCache(Long userId){
         int userLotteryNum = cacheMgr.incrUserDayLotteryNum(userId);

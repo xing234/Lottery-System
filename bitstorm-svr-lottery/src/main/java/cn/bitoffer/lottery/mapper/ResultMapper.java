@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface ResultMapper {
-    Result save(@Param("result") Result result);
+    void save(@Param("result") Result result);
 
     void deleteAll();
 }
