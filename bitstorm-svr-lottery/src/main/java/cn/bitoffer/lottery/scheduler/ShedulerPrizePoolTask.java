@@ -40,8 +40,8 @@ public class ShedulerPrizePoolTask {
         return ret;
     }
 
-    @Scheduled(cron = "0 * * * * *")
-    @PostConstruct
+//    @Scheduled(cron = "0 * * * * *")
+//    @PostConstruct
     public void fillPrizePool() throws ParseException {
         log.info("Resetting prize pool!!!!!");
         int totalNum = 0;

@@ -29,7 +29,7 @@
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="coupon.id">
-        insert into t_coupon (`prize_id`,`code`,`sys_status`)
+        insert into t_coupon (`prize_id`,`code`,`sys_created`,`sys_updated`,`sys_status`)
         values (#{coupon.prizeId},#{coupon.code},#{coupon.sysCreated},#{coupon.sysUpdated},#{coupon.sysStatus});
     </insert>
 

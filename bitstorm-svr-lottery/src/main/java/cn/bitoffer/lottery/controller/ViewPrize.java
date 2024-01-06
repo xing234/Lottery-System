@@ -10,7 +10,7 @@ public class ViewPrize {
     private String prizeCode;
     private int prizeTime;
     private int leftNum;
-    private int prizeTye;
+    private int prizeType;
     private String prizePlan;
     private Date beginTime;
     private Date endTime;
@@ -74,11 +74,11 @@ public class ViewPrize {
     }
 
     public int getPrizeTye() {
-        return prizeTye;
+        return prizeType;
     }
 
     public void setPrizeTye(int prizeTye) {
-        this.prizeTye = prizeTye;
+        this.prizeType = prizeTye;
     }
 
     public String getPrizePlan() {

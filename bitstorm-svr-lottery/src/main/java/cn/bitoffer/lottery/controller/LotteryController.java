@@ -165,7 +165,7 @@ public class LotteryController {
         try {
             lotteryServiceImpl2.importCouponWithCache(prizeId, code);
         } catch (Exception e) {
-            System.out.println("lottery err " + e.getMessage());
+            log.info("import_coupon_cache err " + e.getMessage());
             return ResponseEntity.fail();
         }
         return ResponseEntity.ok();

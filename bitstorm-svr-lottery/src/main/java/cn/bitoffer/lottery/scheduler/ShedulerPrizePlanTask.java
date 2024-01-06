@@ -58,8 +58,8 @@ public class ShedulerPrizePlanTask {
     };
 
 
-    @Scheduled(cron = "* */5 * * * *")
-    @PostConstruct
+//    @Scheduled(cron = "* */5 * * * *")
+//    @PostConstruct
     public void resetAllPrizePlan() throws ParseException {
         log.info("Resetting all prizes!!!!!");
         ArrayList<Prize> prizeList = prizeMapper.getAll();

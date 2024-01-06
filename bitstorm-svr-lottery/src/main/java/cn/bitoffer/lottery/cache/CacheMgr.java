@@ -136,7 +136,11 @@ public class CacheMgr {
     }
 
     public ArrayList<Prize> getAllPrizesByCache() throws ParseException {
-        String valueStr = redisUtil.get(Constants.allPrizeCacheKey).toString();
+        Object obj = redisUtil.get(Constants.allPrizeCacheKey);
+        if (obj == null) {
+            return null;
+        }
+        String valueStr = obj.toString();
         ArrayList<Prize> prizeList = new ArrayList<Prize>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -155,7 +159,7 @@ public class CacheMgr {
             prize.setPrizeProfile(valueMap.get("PrizeProfile"));
             prize.setSysStatus(Integer.parseInt(valueMap.get("SysStatus")));
             prize.setSysIp(valueMap.get("SysIp"));
-            prize.setBeginTime(sdf.parse(valueMap.get("BlackTime")));
+            prize.setBeginTime(sdf.parse(valueMap.get("BeginTime")));
             prize.setEndTime(sdf.parse(valueMap.get("EndTime")));
             prize.setPrizeBegin(sdf.parse(valueMap.get("PrizeBegin")));
             prize.setPrizeEnd(sdf.parse(valueMap.get("PrizeEnd")));

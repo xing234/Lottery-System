@@ -68,13 +68,14 @@ public class LotteryServiceImpl1 implements LotteryService {
         ******** 抽奖逻辑*******
         */
         if (lock.tryLock()) {
-           getLucky(lotteryResult, userID, userName,ip);
+            log.info("get lock success!!!!!!!!");
             try {
-                TimeUnit.SECONDS.sleep(30);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                getLucky(lotteryResult, userID, userName,ip);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                lock.unlock();
             }
-            lock.unlock();
         }
         return lotteryResult;
 
@@ -197,8 +198,8 @@ public class LotteryServiceImpl1 implements LotteryService {
     }
 
     public boolean checkIpLimit(String ipStr) {
-        int ip = Integer.parseInt(ipStr);
-        int i = ip % Constants.ipFrameSize;
+        long ip = UtilTools.ipToLong(ipStr);
+        int i = new Long(ip % Constants.ipFrameSize).intValue();
         String key = String.format(Constants.ipLotteryDayNumPrefix+"%d", i);
         double ret = redisUtil.hincr(key,ipStr,1);
         if ((int)ret > Constants.ipLimitMax) {

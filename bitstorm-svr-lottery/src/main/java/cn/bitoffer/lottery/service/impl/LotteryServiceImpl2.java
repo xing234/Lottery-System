@@ -315,7 +315,7 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
     public Prize getPrizeWithCache(Long prizeId) throws ParseException {
         ArrayList<Prize> prizeList = getAllPrizeListWithCache();
         for(Prize prize: prizeList){
-            if (prize.getId() == prizeId) {
+            if (prize.getId().equals(prizeId)) {
                 return prize;
             }
         }
@@ -329,15 +329,19 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         Prize prize = getPrizeWithCache(prizeId);
         if (prize == null || prize.getPrizeType() != Constants.prizeTypeCouponDiff) {
             log.info("invalid prize type: {} or id: {}",prize.getPrizeType(),prizeId);
+            return;
         }
         int successNum=0,failNum = 0;
         String[] codeList = Strings.split(codes, '\n');
+        Date now = new Date();
         for(String code:codeList){
             code = code.trim();
             Coupon coupon = new Coupon();
             coupon.setPrizeId(prizeId);
             coupon.setCode(code);
             coupon.setSysStatus(1);
+            coupon.setSysCreated(now);
+            coupon.setSysUpdated(now);
             int ret = couponMapper.save(coupon);
             if (ret == 0) {
                 failNum++;
