@@ -47,8 +47,9 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
             return lotteryResult;
         }
 
+        Date now = new Date();
         // 3. 验证IP是否在ip黑名单
-        CheckResult ipCheckResult = checkBlackIpWithCache(ip);
+        CheckResult ipCheckResult = checkBlackIpWithCache(now,ip);
         checkResult.setBlackIp(ipCheckResult.getBlackIp());
         if (!ipCheckResult.isOk()) {
             log.info("lotteryV1|checkBlackIp failed，ip：{}", ip);
@@ -57,7 +58,7 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         }
 
         // 4. 验证用户是否在用户黑名单
-        CheckResult userCheckResult = checkBlackUserWithCache(userID);
+        CheckResult userCheckResult = checkBlackUserWithCache(now,userID);
         checkResult.setBlackUser(userCheckResult.getBlackUser());
         if (!userCheckResult.isOk()) {
             log.info("lotteryV1|checkBlackUser failed，user_id：{}", userID);
@@ -68,7 +69,7 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
 
         // 5. 奖品匹配
         int prizeCode = UtilTools.getRandom(Constants.prizeCodeMax);
-        LotteryPrizeInfo prize = getPrizeWithCache(prizeCode);
+        LotteryPrizeInfo prize = getPrizeWithCache(now,prizeCode);
         if (prize == null)  {
             log.info("lotteryV1|getPrize null");
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
@@ -101,14 +102,14 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         }
         lotteryResult.setLotteryPrize(prize);
         // 8.记录中奖记录
-        logLotteryResult(prize,userID,ip,userName,prizeCode);
+        logLotteryResult(prize,now,userID,ip,userName,prizeCode);
         // 9. 大奖黑名单处理
         if (prize.getPrizeType() == Constants.prizeTypeEntityLarge) {
             LotteryUserInfo lotteryUserInfo = new LotteryUserInfo();
             lotteryUserInfo.setUserId(userID);
             lotteryUserInfo.setUserName(userName);
             lotteryUserInfo.setIp(ip);
-            prizeLargeBlackLimit(checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
+            prizeLargeBlackLimit(now,checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
         }
         lock.unlock();
         return lotteryResult;
@@ -172,7 +173,7 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         return true;
     }
 
-    public CheckResult checkBlackIpWithCache(String ipStr) throws ParseException {
+    public CheckResult checkBlackIpWithCache(Date now,String ipStr) throws ParseException {
         CheckResult checkResult = new CheckResult();
         BlackIp blackIp = getBLackIpWithCache(ipStr);
         checkResult.setBlackIp(blackIp);
@@ -180,8 +181,7 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
             checkResult.setOk(true);
             return checkResult;
         }
-        Date data = new Date();
-        if (data.before(blackIp.getBlackTime())) {
+        if (now.before(blackIp.getBlackTime())) {
             checkResult.setOk(false);
             return checkResult;
         }
@@ -202,12 +202,11 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
     }
 
 
-    public CheckResult checkBlackUserWithCache(Long userId) throws ParseException {
+    public CheckResult checkBlackUserWithCache(Date now,Long userId) throws ParseException {
         CheckResult checkResult = new CheckResult();
         BlackUser blackUser = getBlackUserWithCache(userId);
         checkResult.setBlackUser(blackUser);
-        Date date = new Date();
-        if (blackUser != null && date.before(blackUser.getBlackTime())) {
+        if (blackUser != null && now.before(blackUser.getBlackTime())) {
             checkResult.setOk(false);
         }else{
             checkResult.setOk(true);
@@ -225,8 +224,8 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         return blackUser;
     }
 
-    public LotteryPrizeInfo getPrizeWithCache(int prizeCode) throws ParseException {
-        ArrayList<LotteryPrizeInfo> lotteryPrizeInfoList = getAllUsefulPrizesWithCache();
+    public LotteryPrizeInfo getPrizeWithCache(Date now,int prizeCode) throws ParseException {
+        ArrayList<LotteryPrizeInfo> lotteryPrizeInfoList = getAllUsefulPrizesWithCache(now);
         for (LotteryPrizeInfo lotteryPrizeInfo : lotteryPrizeInfoList) {
             if (lotteryPrizeInfo.getPrizeCodeLow() <= prizeCode && lotteryPrizeInfo.getPrizeCodeHigh() >= prizeCode) {
                 return lotteryPrizeInfo;
@@ -235,8 +234,8 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         return null;
     }
 
-    public ArrayList<LotteryPrizeInfo> getAllUsefulPrizesWithCache() throws ParseException {
-        ArrayList<Prize> prizeList = getAllUsefulPrizeListWithCache();
+    public ArrayList<LotteryPrizeInfo> getAllUsefulPrizesWithCache(Date now) throws ParseException {
+        ArrayList<Prize> prizeList = getAllUsefulPrizeListWithCache(now);
         if (prizeList == null || prizeList.isEmpty()) {
             return null;
         }
@@ -267,9 +266,8 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         return lotteryPrizeInfoList;
     }
 
-    public ArrayList<Prize> getAllUsefulPrizeListWithCache() throws ParseException {
+    public ArrayList<Prize> getAllUsefulPrizeListWithCache(Date now) throws ParseException {
         ArrayList<Prize> prizeList = getAllPrizeListWithCache();
-        Date now = new Date();
         ArrayList<Prize> usefulPrizeList = new ArrayList<Prize>();
         for (Prize prize : prizeList) {
             if (prize.getId() > 0 && prize.getSysStatus() == 1 && prize.getPrizeNum() > 0 &&

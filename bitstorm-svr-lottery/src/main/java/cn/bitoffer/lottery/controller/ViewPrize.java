@@ -73,12 +73,12 @@ public class ViewPrize {
         this.leftNum = leftNum;
     }
 
-    public int getPrizeTye() {
+    public int getPrizeType() {
         return prizeType;
     }
 
-    public void setPrizeTye(int prizeTye) {
-        this.prizeType = prizeTye;
+    public void setPrizeType(int prizeType) {
+        this.prizeType = prizeType;
     }
 
     public String getPrizePlan() {

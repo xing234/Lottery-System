@@ -69,7 +69,7 @@ public class ShedulerPrizePlanTask {
                 // ResetPrizePlan只会更新db的数据
                 resetPrizePlan(prize);
                 // 因为上面resetPrizePlan会把缓存中的奖品数据清空，所以这里用一个缓存读取，将数据加载到缓存
-                lotteryServiceImpl3.getAllUsefulPrizesWithCache();
+                lotteryServiceImpl3.getAllUsefulPrizesWithCache(now);
             }
         }
     }

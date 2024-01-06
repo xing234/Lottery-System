@@ -209,7 +209,7 @@ public class LotteryServiceImpl1 implements LotteryService {
         return true;
     }
 
-    public CheckResult checkBlackIp(String ipStr) {
+    public CheckResult checkBlackIp(Date now,String ipStr) {
         CheckResult checkResult = new CheckResult();
         BlackIp blackIp = blackIpMapper.getByIP(ipStr);
         checkResult.setBlackIp(blackIp);
@@ -217,8 +217,7 @@ public class LotteryServiceImpl1 implements LotteryService {
             checkResult.setOk(true);
             return checkResult;
         }
-        Date data = new Date();
-        if (data.before(blackIp.getBlackTime())) {
+        if (now.before(blackIp.getBlackTime())) {
             checkResult.setOk(false);
             return checkResult;
         }
@@ -226,12 +225,11 @@ public class LotteryServiceImpl1 implements LotteryService {
         return checkResult;
     }
 
-    public CheckResult checkBlackUser(Long userId) {
+    public CheckResult checkBlackUser(Date now,Long userId) {
         CheckResult checkResult = new CheckResult();
         BlackUser blackUser = blackUserMapper.getByUserId(userId);
         checkResult.setBlackUser(blackUser);
-        Date data = new Date();
-        if (blackUser != null && data.before(blackUser.getBlackTime())) {
+        if (blackUser != null && now.before(blackUser.getBlackTime())) {
             checkResult.setOk(false);
             return checkResult;
         }
@@ -239,9 +237,9 @@ public class LotteryServiceImpl1 implements LotteryService {
         return checkResult;
     }
 
-    public ArrayList<LotteryPrizeInfo> getAllUsefulPrizes() {
+    public ArrayList<LotteryPrizeInfo> getAllUsefulPrizes(Date now) {
         ArrayList<LotteryPrizeInfo> lotteryPrizeInfoList = new ArrayList<LotteryPrizeInfo>();
-        ArrayList<Prize> prizeList = prizeMapper.getAllUsefulPrizeList(new Date());
+        ArrayList<Prize> prizeList = prizeMapper.getAllUsefulPrizeList(now);
         for (Prize prize : prizeList) {
             String[] codes = prize.getPrizeCode().split("-");
             if (codes.length == 2) {
@@ -268,8 +266,8 @@ public class LotteryServiceImpl1 implements LotteryService {
         return lotteryPrizeInfoList;
     }
 
-    public LotteryPrizeInfo getPrize(int prizeCode){
-        ArrayList<LotteryPrizeInfo> lotteryPrizeInfoList = getAllUsefulPrizes();
+    public LotteryPrizeInfo getPrize(Date now,int prizeCode){
+        ArrayList<LotteryPrizeInfo> lotteryPrizeInfoList = getAllUsefulPrizes(now);
         for (LotteryPrizeInfo lotteryPrizeInfo : lotteryPrizeInfoList) {
             if (lotteryPrizeInfo.getPrizeCodeLow() <= prizeCode && lotteryPrizeInfo.getPrizeCodeHigh() >= prizeCode) {
                 if (lotteryPrizeInfo.getPrizeType() < Constants.prizeTypeEntitySmall){
@@ -320,8 +318,9 @@ public class LotteryServiceImpl1 implements LotteryService {
             lotteryResult.setErrcode(ErrorCode.ERR_IP_LIMIT_INVALID);
         }
 
+        Date now = new Date();
         // 3. 验证IP是否在ip黑名单
-        CheckResult ipCheckResult = checkBlackIp(ip);
+        CheckResult ipCheckResult = checkBlackIp(now,ip);
         checkResult.setBlackIp(ipCheckResult.getBlackIp());
         if (!ipCheckResult.isOk()) {
             log.info("lotteryV1|checkBlackIp failed，ip：{}", ip);
@@ -329,7 +328,7 @@ public class LotteryServiceImpl1 implements LotteryService {
         }
 
         // 4. 验证用户是否在用户黑名单
-        CheckResult userCheckResult = checkBlackUser(userID);
+        CheckResult userCheckResult = checkBlackUser(now,userID);
         checkResult.setBlackUser(userCheckResult.getBlackUser());
         if (!userCheckResult.isOk()) {
             log.info("lotteryV1|checkBlackUser failed，user_id：{}", userID);
@@ -339,7 +338,8 @@ public class LotteryServiceImpl1 implements LotteryService {
 
         // 5. 奖品匹配
         int prizeCode = UtilTools.getRandom(Constants.prizeCodeMax);
-        LotteryPrizeInfo prize = getPrize(prizeCode);
+        log.info("lotteryV1|prizeCode===={}", prizeCode);
+        LotteryPrizeInfo prize = getPrize(now,prizeCode);
         if (prize == null)  {
             log.info("lotteryV1|getPrize null");
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
@@ -368,18 +368,18 @@ public class LotteryServiceImpl1 implements LotteryService {
         }
         lotteryResult.setLotteryPrize(prize);
         // 8.记录中奖记录
-        logLotteryResult(prize,userID,ip,userName,prizeCode);
+        logLotteryResult(prize,now,userID,ip,userName,prizeCode);
         // 9. 大奖黑名单处理
         if (prize.getPrizeType() == Constants.prizeTypeEntityLarge) {
             LotteryUserInfo lotteryUserInfo = new LotteryUserInfo();
             lotteryUserInfo.setUserId(userID);
             lotteryUserInfo.setUserName(userName);
             lotteryUserInfo.setIp(ip);
-            prizeLargeBlackLimit(checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
+            prizeLargeBlackLimit(now,checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
         }
     }
 
-    public void logLotteryResult(LotteryPrizeInfo prize,Long userId,String ip,String userName,int prizeCode) {
+    public void logLotteryResult(LotteryPrizeInfo prize,Date now,Long userId,String ip,String userName,int prizeCode) {
         Result result = new Result();
         result.setPrizeId(prize.getId());
         result.setPrizeName(prize.getTitle());
@@ -388,16 +388,17 @@ public class LotteryServiceImpl1 implements LotteryService {
         result.setUserName(userName);
         result.setPrizeCode(prizeCode);
         result.setPrizeData(prize.getPrizeProfile());
+        result.setSysCreated(now);
         result.setSysIp(ip);
         result.setSysStatus(1);
         resultMapper.save(result);
     }
 
-    public void prizeLargeBlackLimit(BlackUser blackUser,BlackIp blackIp,LotteryUserInfo lotteryUserInfo){
+    public void prizeLargeBlackLimit(Date now,BlackUser blackUser,BlackIp blackIp,LotteryUserInfo lotteryUserInfo){
         Calendar calendar = Calendar.getInstance(); // 当前时间
+        calendar.setTime(now);
         calendar.add(Calendar.DATE,Constants.defaultBlackTime); // 当前时间黑名单限制之后的截止时间
         Date blackTime = calendar.getTime();
-        Date now = new Date();
         if (blackUser == null || blackUser.getUserId() <= 0){
             // 黑名单不存在，新加入黑名单
             BlackUser blackUserInfo = new BlackUser();
@@ -436,7 +437,7 @@ public class LotteryServiceImpl1 implements LotteryService {
             prize.setPrizeTime(viewPrize.getPrizeTime());
             prize.setImg(viewPrize.getImg());
             prize.setDisplayOrder(viewPrize.getDisplayOrder());
-            prize.setPrizeType(viewPrize.getPrizeTye());
+            prize.setPrizeType(viewPrize.getPrizeType());
             prize.setBeginTime(viewPrize.getBeginTime());
             prize.setEndTime(viewPrize.getEndTime());
             prize.setPrizePlan(viewPrize.getPrizePlan());

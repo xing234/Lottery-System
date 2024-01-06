@@ -42,8 +42,9 @@ public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryS
             return lotteryResult;
         }
 
+        Date now = new Date();
         // 3. 验证IP是否在ip黑名单
-        CheckResult ipCheckResult = checkBlackIpWithCache(ip);
+        CheckResult ipCheckResult = checkBlackIpWithCache(now,ip);
         checkResult.setBlackIp(ipCheckResult.getBlackIp());
         if (!ipCheckResult.isOk()) {
             log.info("lotteryV3|checkBlackIp failed，ip：{}", ip);
@@ -52,7 +53,7 @@ public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryS
         }
 
         // 4. 验证用户是否在用户黑名单
-        CheckResult userCheckResult = checkBlackUserWithCache(userID);
+        CheckResult userCheckResult = checkBlackUserWithCache(now,userID);
         checkResult.setBlackUser(userCheckResult.getBlackUser());
         if (!userCheckResult.isOk()) {
             log.info("lotteryV3|checkBlackUser failed，user_id：{}", userID);
@@ -63,7 +64,7 @@ public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryS
 
         // 5. 奖品匹配
         int prizeCode = UtilTools.getRandom(Constants.prizeCodeMax);
-        LotteryPrizeInfo prize = getPrizeWithCache(prizeCode);
+        LotteryPrizeInfo prize = getPrizeWithCache(now,prizeCode);
         if (prize == null)  {
             log.info("lotteryV3|getPrize null");
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
@@ -102,14 +103,14 @@ public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryS
         }
         lotteryResult.setLotteryPrize(prize);
         // 8.记录中奖记录
-        logLotteryResult(prize,userID,ip,userName,prizeCode);
+        logLotteryResult(prize,now,userID,ip,userName,prizeCode);
         // 9. 大奖黑名单处理
         if (prize.getPrizeType() == Constants.prizeTypeEntityLarge) {
             LotteryUserInfo lotteryUserInfo = new LotteryUserInfo();
             lotteryUserInfo.setUserId(userID);
             lotteryUserInfo.setUserName(userName);
             lotteryUserInfo.setIp(ip);
-            prizeLargeBlackLimit(checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
+            prizeLargeBlackLimit(now,checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
         }
         lock.unlock();
         return lotteryResult;

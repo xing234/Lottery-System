@@ -100,7 +100,7 @@ public class ShedulerPrizePoolTask {
             }
             if(totalNum > 0) {
                 // 将更新后的数据加载到缓存中，因为上面updatePrizePlanWithCache会把缓存中的数据清空
-                lotteryServiceImpl3.getAllUsefulPrizesWithCache();
+                lotteryServiceImpl3.getAllUsefulPrizesWithCache(now);
             }
         }
         log.debug("fillPrizePool with num: {}", totalNum);
