@@ -8,6 +8,8 @@ import cn.bitoffer.lottery.model.LotteryResult;
 import cn.bitoffer.lottery.model.LotteryUserInfo;
 import cn.bitoffer.lottery.service.LotteryService;
 import cn.bitoffer.lottery.utils.UtilTools;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.springframework.stereotype.Service;
@@ -21,25 +23,37 @@ public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryS
     public LotteryResult lottery(Long userID, String userName, String ip) throws ParseException {
         LotteryResult lotteryResult = new LotteryResult();
         String lockKey = String.format(Constants.lotteryLockKeyPrefix+"%d", userID);
-        // 在spring boot 2.0.6版本中整合的redisson,key和锁不能一样
-        // redis setnx 操作,此处的lockKey在后面追加1是为了避免redisson锁时报错, 需要和待锁住的数据的key信息不同
-        RLock lock = redissonClient.getLock(lockKey);
-        lock.lock();
+        RLock lock = super.redissonClient.getLock(lockKey);
         /*
          ******** 抽奖逻辑*******
          */
+        if (lock.tryLock()) {
+            log.info("get lock success!!!!!!!!");
+            try {
+                getLuckyV3(lotteryResult, userID, userName,ip);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                lock.unlock();
+            }
+        }
+        System.out.println("lotteryResult="+ JSON.toJSONString(lotteryResult, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue,SerializerFeature.WriteDateUseDateFormat));
+        return lotteryResult;
+    }
+
+    public void getLuckyV3(LotteryResult lotteryResult,Long userID, String userName, String ip) throws ParseException {
         CheckResult checkResult = new CheckResult();
         // 1. 验证用户今日抽奖次数
         if (!checkUserDayLotteryTimesWithCache(userID)) {
             log.info("lotteryV3|CheckUserDayLotteryTimes failed，user_id：{}", userID);
             lotteryResult.setErrcode(ErrorCode.ERR_USER_LIMIT_INVALID);
-            return lotteryResult;
+            return;
         }
         // 2. 验证当天IP参与的抽奖次数
         if (!checkIpLimit(ip)) {
             log.info("lotteryV3|checkIpLimit failed，ip：{}", ip);
             lotteryResult.setErrcode(ErrorCode.ERR_IP_LIMIT_INVALID);
-            return lotteryResult;
+            return;
         }
 
         Date now = new Date();
@@ -49,7 +63,7 @@ public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryS
         if (!ipCheckResult.isOk()) {
             log.info("lotteryV3|checkBlackIp failed，ip：{}", ip);
             lotteryResult.setErrcode(ErrorCode.ERR_BLACK_IP);
-            return lotteryResult;
+            return;
         }
 
         // 4. 验证用户是否在用户黑名单
@@ -58,36 +72,38 @@ public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryS
         if (!userCheckResult.isOk()) {
             log.info("lotteryV3|checkBlackUser failed，user_id：{}", userID);
             lotteryResult.setErrcode(ErrorCode.ERR_BLACK_USER);
-            return lotteryResult;
+            return;
         }
         checkResult.setOk(true);
 
         // 5. 奖品匹配
         int prizeCode = UtilTools.getRandom(Constants.prizeCodeMax);
+        log.info("lotteryV1|prizeCode===={}", prizeCode);
         LotteryPrizeInfo prize = getPrizeWithCache(now,prizeCode);
         if (prize == null)  {
             log.info("lotteryV3|getPrize null");
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-            return lotteryResult;
+            return;
         }
         if (prize.getPrizeNum() <=0) {
             log.info("lotteryV3|prize_num invalid,prize_id: {}", prize.getId());
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-            return lotteryResult;
+            return;
         }
 
         // 6.从奖品池发奖
         int num = getPrizeWithPool(prize.getId());
+        log.info("lotteryV1|num===={}", num);
         // 奖品池奖品不够，不能发奖
         if (num <= 0) {
             log.info("lotteryV3|prize pool not enough,prize_id: {}", prize.getId());
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-            return lotteryResult;
+            return;
         }
         if (!giveOutPrizeWithPool(prize.getId())) {
             log.info("lotteryV3|prize left not enough,prize_id: {}", prize.getId());
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-            return lotteryResult;
+            return;
         }
 
         // 7. 发放优惠券
@@ -96,12 +112,14 @@ public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryS
             if (code.isEmpty()) {
                 log.info("lotteryV1|coupon code is empty: prize_id: {}", prize.getId());
                 lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
-                return lotteryResult;
+                return;
             }
             // 填充优惠券编码
             prize.setCouponCode(code);
         }
+        lotteryResult.setErrcode(ErrorCode.SUCCESS);
         lotteryResult.setLotteryPrize(prize);
+
         // 8.记录中奖记录
         logLotteryResult(prize,now,userID,ip,userName,prizeCode);
         // 9. 大奖黑名单处理
@@ -112,8 +130,6 @@ public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryS
             lotteryUserInfo.setIp(ip);
             prizeLargeBlackLimit(now,checkResult.getBlackUser(),checkResult.getBlackIp(),lotteryUserInfo);
         }
-        lock.unlock();
-        return lotteryResult;
     }
 
     public int getPrizeWithPool(Long prizeId) {

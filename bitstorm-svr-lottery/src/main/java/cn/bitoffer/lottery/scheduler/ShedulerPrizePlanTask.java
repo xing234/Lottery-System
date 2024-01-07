@@ -7,11 +7,15 @@ import cn.bitoffer.lottery.model.Prize;
 import cn.bitoffer.lottery.service.impl.LotteryServiceImpl2;
 import cn.bitoffer.lottery.service.impl.LotteryServiceImpl3;
 import cn.bitoffer.lottery.utils.UtilTools;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Async;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
 
 import javax.annotation.PostConstruct;
 import java.text.DateFormat;
@@ -57,9 +61,8 @@ public class ShedulerPrizePlanTask {
         23, 23, 23,
     };
 
-
-//    @Scheduled(cron = "* */5 * * * *")
-//    @PostConstruct
+    @Async
+    @Scheduled(fixedDelay = 300000)
     public void resetAllPrizePlan() throws ParseException {
         log.info("Resetting all prizes!!!!!");
         ArrayList<Prize> prizeList = prizeMapper.getAll();
@@ -129,6 +132,8 @@ public class ShedulerPrizePlanTask {
             prizePlanMap.put(day, dayPrizePlan);
         }
         log.debug("prize_id = {}\nprizePlanMap = {}", prize.getId(), prizePlanMap);
+        System.out.println("prize_id="+prize.getId());
+        System.out.println("prizePlanMap="+ JSON.toJSONString(prizePlanMap,SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue,SerializerFeature.WriteDateUseDateFormat));
 
         // 格式化 dayPrizePlan数据，序列化成为一个[时间:数量]二元组的数组
         ArrayList<TimePrizeInfo>  planList = formatPrizePlan(now, prizePlanDays, prizePlanMap);
@@ -206,18 +211,30 @@ public class ShedulerPrizePlanTask {
 
         for (int i = 0; i < prizePlanDays; i++) {
             HashMap<Integer, int[]> dayPrizePlanMap = prizePlan.get(i);
-            long dayTimeStamp = now.getTime() + i*86400; // dayTimeStamp 为发奖周期中的每一天对应当前时间的时刻，一天有86400秒
+            long dayTimeStamp = now.getTime() + i*86400*1000; // dayTimeStamp 为发奖周期中的每一天对应当前时间的时刻，一天有86400秒
             for(int h = 0;h < 24; h++){
                 int[] hourPrizePlanMap = dayPrizePlanMap.get((h+nowHour)%24);
-                long hourTimeStamp = dayTimeStamp + h * 3600; // hourTimeStamp 为发奖周期中的每一天中每个小时对应的时刻，1小时有3600秒
+                if (hourPrizePlanMap == null || hourPrizePlanMap.length == 0) {
+                    continue;
+                }
+                long hourTimeStamp = dayTimeStamp + h * 3600*1000; // hourTimeStamp 为发奖周期中的每一天中每个小时对应的时刻，1小时有3600秒
                 for(int m = 0; m < 60; m++) {
                     int num = hourPrizePlanMap[m];
                     if (num <=0) {
                         continue;
                     }
                     // 找到特定一个时间的计划数据
-                    long minuteTimeStamp = hourTimeStamp + m*60; // minuteTimeStamp 为发奖周期中的每一分钟对应的时刻，1分钟有60秒
+                    long minuteTimeStamp = hourTimeStamp + m*60*1000; // minuteTimeStamp 为发奖周期中的每一分钟对应的时刻，1分钟有60秒
                     TimePrizeInfo timePrizeInfo = new TimePrizeInfo();
+//                    System.out.println("i ===" + i);
+//                    System.out.println("nowTimeStamp ===" + now.getTime());
+//                    System.out.println("minuteTimeStamp ===" + minuteTimeStamp);
+//                    System.out.println("difference ===" + (minuteTimeStamp-now.getTime()));
+//                    System.out.println("nowDate ===" + new Date(now.getTime()));
+//                    System.out.println("minuteTimeDate===" + new Date(minuteTimeStamp));
+//                    System.out.println("now ===" + sdf.format(now.getTime()));
+//                    System.out.println("minuteTime===" + sdf.format(minuteTimeStamp));
+//                    System.out.println("--------------------------------------------------------------------------");
                     timePrizeInfo.setTime(sdf.format(minuteTimeStamp));
                     timePrizeInfo.setNum(num);
                     result.add(timePrizeInfo);

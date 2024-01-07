@@ -52,11 +52,13 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         if (!checkUserDayLotteryTimesWithCache(userID)) {
             log.info("lotteryV1|CheckUserDayLotteryTimes failed，user_id：{}", userID);
             lotteryResult.setErrcode(ErrorCode.ERR_USER_LIMIT_INVALID);
+            return;
         }
         // 2. 验证当天IP参与的抽奖次数
         if (!checkIpLimit(ip)) {
             log.info("lotteryV1|checkIpLimit failed，ip：{}", ip);
             lotteryResult.setErrcode(ErrorCode.ERR_IP_LIMIT_INVALID);
+            return;
         }
 
         Date now = new Date();
@@ -66,6 +68,7 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         if (!ipCheckResult.isOk()) {
             log.info("lotteryV1|checkBlackIp failed，ip：{}", ip);
             lotteryResult.setErrcode(ErrorCode.ERR_BLACK_IP);
+            return;
         }
 
         // 4. 验证用户是否在用户黑名单
@@ -74,6 +77,7 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         if (!userCheckResult.isOk()) {
             log.info("lotteryV1|checkBlackUser failed，user_id：{}", userID);
             lotteryResult.setErrcode(ErrorCode.ERR_BLACK_USER);
+            return;
         }
         checkResult.setOk(true);
 
@@ -84,17 +88,20 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
         if (prize == null)  {
             log.info("lotteryV1|getPrize null");
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+            return;
         }
 
         if (prize.getPrizeNum() <=0) {
             log.info("lotteryV1|prize_num invalid,prize_id: {}", prize.getId());
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+            return;
         }
 
         // 6. 剩余奖品发放
         if (!giveOutPrizeWithCache(prize.getId())) {
             log.info("lotteryV1|prize not enough,prize_id: {}", prize.getId());
             lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+            return;
         }
 
         // 7. 发放优惠券
@@ -103,10 +110,12 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
             if (code.isEmpty()) {
                 log.info("lotteryV1|coupon code is empty: prize_id: {}", prize.getId());
                 lotteryResult.setErrcode(ErrorCode.ERR_NOT_WON);
+                return;
             }
             // 填充优惠券编码
             prize.setCouponCode(code);
         }
+        lotteryResult.setErrcode(ErrorCode.SUCCESS);
         lotteryResult.setLotteryPrize(prize);
         // 8.记录中奖记录
         logLotteryResult(prize,now,userID,ip,userName,prizeCode);

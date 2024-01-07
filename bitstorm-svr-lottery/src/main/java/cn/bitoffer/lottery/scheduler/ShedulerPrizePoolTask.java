@@ -9,6 +9,7 @@ import cn.bitoffer.lottery.service.impl.LotteryServiceImpl3;
 import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -39,9 +40,8 @@ public class ShedulerPrizePoolTask {
         }
         return ret;
     }
-
-//    @Scheduled(cron = "0 * * * * *")
-//    @PostConstruct
+    @Async
+    @Scheduled(initialDelay = 2000,fixedDelay = 60000)  // 第一次延迟1秒后执行,之后在上一次执行完毕时间点之后1min秒再执行
     public void fillPrizePool() throws ParseException {
         log.info("Resetting prize pool!!!!!");
         int totalNum = 0;
@@ -50,7 +50,8 @@ public class ShedulerPrizePoolTask {
             return;
         }
         Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+       // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for(Prize prize : prizeList){
             // sys_status = 1 表示有效
             if(prize.getSysStatus() != 1){
@@ -74,6 +75,10 @@ public class ShedulerPrizePoolTask {
                 Date t = null;
                 try {
                     t = sdf.parse(prizePlanInfo.getTime()); //Mon Jan 14 00:00:00 CST 2013
+//                    System.out.println("prizePlanInfo.getTime()======"+prizePlanInfo.getTime());
+//                    System.out.println("prizePlanInfo.getTime()======"+t);
+//                    System.out.println("now======"+now);
+//                    System.out.println("----------------------------------------------------------------");
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

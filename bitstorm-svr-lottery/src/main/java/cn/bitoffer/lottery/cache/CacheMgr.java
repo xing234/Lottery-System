@@ -230,7 +230,7 @@ public class CacheMgr {
     }
 
     public int decrPrizeLeftNumByPool(Long prizeId) {
-        double ret = redisUtil.hincr(Constants.prizePoolCacheKey,prizeId.toString(),-1);
+        double ret = redisUtil.hdecr(Constants.prizePoolCacheKey,prizeId.toString(),1);
         return (int)ret;
     }
 

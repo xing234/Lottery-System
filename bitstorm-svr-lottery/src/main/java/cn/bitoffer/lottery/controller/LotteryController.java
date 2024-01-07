@@ -105,10 +105,10 @@ public class LotteryController {
             Long userID = new Long(req.userId);
             String userName = req.userName;
             String ip = req.ip;
-
             lotteryResult = lotteryServiceImpl1.lottery(userID, userName, ip);
         } catch (Exception e) {
             System.out.println("lottery err " + e.getMessage());
+            return ResponseEntity.fail();
         }
         return ResponseEntity.resp(ResponseEnum.OK, lotteryResult);
     }
@@ -124,6 +124,7 @@ public class LotteryController {
             lotteryResult = lotteryServiceImpl2.lottery(userID, userName, ip);
         } catch (Exception e) {
             System.out.println("lottery err " + e.getMessage());
+            return ResponseEntity.fail();
         }
         return ResponseEntity.resp(ResponseEnum.OK, lotteryResult);
     }
@@ -136,9 +137,10 @@ public class LotteryController {
             String userName = req.userName;
             String ip = req.ip;
             lotteryResult = lotteryServiceImpl3.lottery(userID, userName, ip);
-            return ResponseEntity.fail();
+
         } catch (Exception e) {
             System.out.println("lottery err " + e.getMessage());
+            return ResponseEntity.fail();
         }
         return ResponseEntity.resp(ResponseEnum.OK, lotteryResult);
     }
