@@ -36,6 +36,14 @@ spring:
     url: jdbc:mysql://192.168.5.51:3306/lottery_system?serverTimezone=GMT%2B8&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
+
+logging:
+  level:
+    root: WARN
+    cn:
+      bitoffer:
+        lottery: ERROR
+
 #  kafka:
 #    #以逗号分隔的主机：端口对列表，用于建立与Kafka的连接
 #    bootstrap-servers: 127.0.0.1:9092
@@ -62,5 +70,5 @@ mybatis:
   #开启驼峰命名
   configuration:
     map-underscore-to-camel-case: false
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 

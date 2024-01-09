@@ -4,7 +4,6 @@ import cn.bitoffer.lottery.cache.CacheMgr;
 import cn.bitoffer.lottery.constant.Constants;
 import cn.bitoffer.lottery.mapper.PrizeMapper;
 import cn.bitoffer.lottery.model.Prize;
-import cn.bitoffer.lottery.service.impl.LotteryServiceImpl2;
 import cn.bitoffer.lottery.service.impl.LotteryServiceImpl3;
 import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,7 +48,6 @@ public class ShedulerPrizePoolTask {
             return;
         }
         Date now = new Date();
-       // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for(Prize prize : prizeList){
             // sys_status = 1 表示有效

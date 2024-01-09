@@ -67,8 +67,6 @@ public class LotteryServiceImpl1 implements LotteryService {
             log.info("get lock success!!!!!!!!");
             try {
                 getLuckyV1(lotteryResult, userID, userName,ip);
-            } catch (Exception e) {
-                e.printStackTrace();
             }finally {
                 lock.unlock();
             }

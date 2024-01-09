@@ -34,8 +34,6 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
             log.info("get lock success!!!!!!!!");
             try {
                 getLuckyV2(lotteryResult, userID, userName,ip);
-            } catch (Exception e) {
-                e.printStackTrace();
             }finally {
                 lock.unlock();
             }
