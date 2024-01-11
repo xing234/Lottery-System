@@ -22,6 +22,7 @@ import java.util.Date;
 public class LotteryServiceImpl3 extends LotteryServiceImpl2 implements LotteryService {
     public LotteryResult lottery(Long userID, String userName, String ip) throws ParseException {
         LotteryResult lotteryResult = new LotteryResult();
+        lotteryResult.setUserId(userID);
         String lockKey = String.format(Constants.lotteryLockKeyPrefix+"%d", userID);
         RLock lock = super.redissonClient.getLock(lockKey);
         /*

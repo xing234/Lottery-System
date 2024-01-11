@@ -7,9 +7,10 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 192.168.5.53:8848
         username: nacos
         password: nacos
+
     gateway:
       routes: # 网关路由配置
         - id: bitstorm-svr-auth # 路由id，自定义，只要唯一即可
@@ -28,6 +29,13 @@ spring:
           uri: lb://bitstorm-svr-demo
           predicates:
             - Path=/demo/**
+          filters:
+            - AuthenticationFilter
+        - id: bitstorm-svr-lottery # 路由id，自定义，只要唯一即可
+          # uri: http://127.0.0.1:8081 # 路由的目标地址 http就是固定地址
+          uri: lb://bitstorm-svr-lottery
+          predicates:
+            - Path=/lottery/**
           filters:
             - AuthenticationFilter
 

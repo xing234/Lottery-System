@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: @artifactId@
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.5.53:8848
+        username: nacos
+        password: nacos
   redis:
     # 数据库
     database: 8

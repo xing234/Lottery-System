@@ -99,10 +99,15 @@ public class LotteryController {
     }
 
     @PostMapping(value = "/v1/get_lucky", consumes = "application/json; charset=utf-8")
-    public ResponseEntity<LotteryResult> lotteryV1(@RequestBody LotteryReq req) {
+    public ResponseEntity<LotteryResult> lotteryV1( @RequestHeader("X-User-Id") Long tokenUserID,@RequestBody LotteryReq req) {
         LotteryResult lotteryResult = null;
         try {
-            Long userID = new Long(req.userId);
+            Long userID = null;
+            if (tokenUserID != null) {
+                userID = tokenUserID;
+            }else {
+                userID = new Long(req.userId);
+            }
             String userName = req.userName;
             String ip = req.ip;
             lotteryResult = lotteryServiceImpl1.lottery(userID, userName, ip);
@@ -114,13 +119,17 @@ public class LotteryController {
     }
 
     @PostMapping(value = "/v2/get_lucky", consumes = "application/json; charset=utf-8")
-    public ResponseEntity<LotteryResult> lotteryV2(@RequestBody LotteryReq req) {
+    public ResponseEntity<LotteryResult> lotteryV2(@RequestHeader("X-User-Id") Long tokenUserID,@RequestBody LotteryReq req) {
         LotteryResult lotteryResult = null;
         try {
-            Long userID = new Long(req.userId);
+            Long userID = null;
+            if (tokenUserID != null) {
+                userID = tokenUserID;
+            }else {
+                userID = new Long(req.userId);
+            }
             String userName = req.userName;
             String ip = req.ip;
-
             lotteryResult = lotteryServiceImpl2.lottery(userID, userName, ip);
         } catch (Exception e) {
             System.out.println("lottery err " + e.getMessage());
@@ -130,10 +139,15 @@ public class LotteryController {
     }
 
     @PostMapping(value = "/v3/get_lucky", consumes = "application/json; charset=utf-8")
-    public ResponseEntity<LotteryResult> lotteryV3(@RequestBody LotteryReq req) {
+    public ResponseEntity<LotteryResult> lotteryV3(@RequestHeader("X-User-Id") Long tokenUserID,@RequestBody LotteryReq req) {
         LotteryResult lotteryResult = null;
         try {
-            Long userID = new Long(req.userId);
+            Long userID = null;
+            if (tokenUserID != null) {
+                userID = tokenUserID;
+            }else {
+                userID = new Long(req.userId);
+            }
             String userName = req.userName;
             String ip = req.ip;
             lotteryResult = lotteryServiceImpl3.lottery(userID, userName, ip);

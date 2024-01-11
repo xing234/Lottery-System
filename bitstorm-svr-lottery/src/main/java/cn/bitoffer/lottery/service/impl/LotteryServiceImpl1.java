@@ -58,6 +58,7 @@ public class LotteryServiceImpl1 implements LotteryService {
     @Override
     public LotteryResult lottery(Long userID, String userName, String ip) throws ParseException {
         LotteryResult lotteryResult = new LotteryResult();
+        lotteryResult.setUserId(userID);
         String lockKey = String.format(Constants.lotteryLockKeyPrefix+"%d", userID);
         RLock lock = redissonClient.getLock(lockKey);
         /*

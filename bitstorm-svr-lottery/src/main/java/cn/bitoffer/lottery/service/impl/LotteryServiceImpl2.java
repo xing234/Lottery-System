@@ -25,6 +25,7 @@ public class LotteryServiceImpl2 extends LotteryServiceImpl1 implements LotteryS
     protected CacheMgr cacheMgr;
     public LotteryResult lottery(Long userID, String userName, String ip) throws ParseException {
         LotteryResult lotteryResult = new LotteryResult();
+        lotteryResult.setUserId(userID);
         String lockKey = String.format(Constants.lotteryLockKeyPrefix+"%d", userID);
         RLock lock = super.redissonClient.getLock(lockKey);
         /*
